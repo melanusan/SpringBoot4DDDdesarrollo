@@ -4,6 +4,7 @@ import com.debuggeandoideas.erp_lite.persistence.jpa.entities.ProductEntity;
 import com.debuggeandoideas.erp_lite.persistence.jpa.repositories.ProductRepository;
 import com.debuggeandoideas.erp_lite.persistence.mongo.documents.CatalogDocument;
 import com.debuggeandoideas.erp_lite.persistence.mongo.repositories.CatalogRepository;
+import com.debuggeandoideas.erp_lite.persistence.rest.adapters.JsonPlaceholderCustomerProviderAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +19,9 @@ public class ErpLiteApplication implements CommandLineRunner {
 	@Autowired
 	private ProductRepository productRepository;
 
+	@Autowired
+    JsonPlaceholderCustomerProviderAdapter jsonPlaceholderCustomerProviderAdapter;
+
 	public static void main(String[] args) {
 		SpringApplication.run(ErpLiteApplication.class, args);
 	}
@@ -28,5 +32,7 @@ public class ErpLiteApplication implements CommandLineRunner {
 		this.catalogRepository.findAll().stream().map(CatalogDocument::getName).forEach(System.out::println);
 		this.productRepository.findAll().stream().map(ProductEntity::getName).forEach(System.out::println);
 
+		var r = jsonPlaceholderCustomerProviderAdapter.findById(1L);
+		System.out.println(r.get().name());
 	}
 }
