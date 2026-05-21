@@ -12,10 +12,8 @@ import software.amazon.awssdk.services.s3.S3Configuration;
 
 @Configuration
 @Slf4j
-//@RequiredArgsConstructor
 public class S3BucketConfig {
 
-    //private final AwsConfigModel awsConfig;
 
     @Bean
     public S3Client s3Client(AwsConfigModel awsConfig) {

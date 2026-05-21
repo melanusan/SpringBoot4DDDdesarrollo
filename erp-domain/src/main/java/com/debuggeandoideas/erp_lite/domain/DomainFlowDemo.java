@@ -1,14 +1,14 @@
 package com.debuggeandoideas.erp_lite.domain;
 
-import com.debuggeandoideas.erp_lite.domain.catalog.Catalog;
-import com.debuggeandoideas.erp_lite.domain.catalog.CatalogItem;
-import com.debuggeandoideas.erp_lite.domain.catalog.CatalogType;
+
 import com.debuggeandoideas.erp_lite.domain.common.DomainEvent;
+/*
 import com.debuggeandoideas.erp_lite.domain.order.Customer;
 import com.debuggeandoideas.erp_lite.domain.order.Order;
 import com.debuggeandoideas.erp_lite.domain.order.OrderItem;
 import com.debuggeandoideas.erp_lite.domain.order.OrderNumber;
 import com.debuggeandoideas.erp_lite.domain.product.*;
+*/
 import com.debuggeandoideas.erp_lite.domain.shared.CustomerId;
 import com.debuggeandoideas.erp_lite.domain.shared.Money;
 import com.debuggeandoideas.erp_lite.domain.shared.Quantity;
@@ -28,7 +28,7 @@ import java.util.Map;
 public class DomainFlowDemo {
 
     public static void main(String[] args) {
-
+/*
         Currency USD = Currency.getInstance("USD");
 
         IO.println("==========================================================");
@@ -405,6 +405,8 @@ public class DomainFlowDemo {
         IO.println("           Domain Events = señales para la capa de aplicación");
         IO.println("           (stock decrement, notificaciones, liberación de reservas)");
         IO.println("==========================================================");
+
+ */
     }
 
     /**
