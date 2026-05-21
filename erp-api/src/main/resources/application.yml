@@ -1,6 +1,6 @@
 spring:
   application:
-    name: erp-lite
+    name: erp-lite-api
 
   # PostgreSQL
   datasource:
@@ -41,6 +41,12 @@ spring:
           max-idle: 8
           min-idle: 0
 
+  cache:
+    type: redis
+    redis:
+      time-to-live: 86400000
+      cache-null-values: false
+
   mongodb:
     uri: mongodb://debuggeandoideas:secret@localhost:27017/erp_catalog_db?authSource=admin
 
@@ -54,7 +60,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: ${EMAIL_USERNAME}
-    password: ${EMAIL_PASSWORD}
+    password:  ${EMAIL_PASSWORD}
     properties:
       mail:
         debug: false  #Debuggers si falla pongan en true para mas detalles en logs

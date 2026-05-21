@@ -1,26 +1,14 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot'
-	id 'io.spring.dependency-management'
+    id 'org.springframework.boot'
 }
 
 dependencies {
-	implementation project(':erp-infrastructure')
-	implementation project(':erp-application')
-	implementation project(':erp-domain')
-	implementation project(':erp-common')
+    // Spring Web solo para el módulo API
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	// Spring Web solo en este módulo
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-tasks.named('bootJar') {
-	enabled = true
-}
-
-tasks.named('jar') {
-	enabled = false
+    // Dependencias de otros módulos
+    implementation project(':erp-common')
+    implementation project(':erp-domain')
+    implementation project(':erp-application')
+    implementation project(':erp-infrastructure')
 }

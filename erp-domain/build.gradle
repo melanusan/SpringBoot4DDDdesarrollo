@@ -1,7 +1,4 @@
-plugins {
-	id 'java'
-}
-
 dependencies {
-	implementation project(':erp-common')
+    // Dependencias del dominio
+    implementation project(':erp-common')
 }

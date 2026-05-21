@@ -1,9 +1,6 @@
-	plugins {
-	id 'java'
-}
-
 dependencies {
-	implementation project(':erp-domain')
-	implementation project(':erp-common')
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // Dependencias de la capa de aplicación
+    implementation project(':erp-common')
+    implementation project(':erp-domain')
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }
