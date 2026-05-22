@@ -4,6 +4,7 @@ import com.debuggeandoideas.erp_lite.domain.ports.repositories.ProductCatalogRep
 import com.debuggeandoideas.erp_lite.domain.views.ItemsView;
 import com.debuggeandoideas.erp_lite.domain.views.ProductView;
 import com.debuggeandoideas.erp_lite.enums.CatalogType;
+import com.debuggeandoideas.erp_lite.exceptions.QueryException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,10 @@ public class FindProductActiveQuery {
 
     public List<ProductView> execute() {
         log.info("Execute FindProductActiveQuery");
-
-        return this.productCatalogRepository.findActive();
+        try {
+            return this.productCatalogRepository.findActive();
+        } catch (RuntimeException e) {
+            throw  new QueryException("Error executing FindProductActiveQuery");
+        }
     }
 }

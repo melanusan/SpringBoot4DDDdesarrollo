@@ -2,6 +2,7 @@ package com.debuggeandoideas.erp_lite.queries;
 
 import com.debuggeandoideas.erp_lite.domain.ports.repositories.ProductCatalogRepositoryPort;
 import com.debuggeandoideas.erp_lite.domain.views.ProductView;
+import com.debuggeandoideas.erp_lite.exceptions.QueryException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,10 @@ public class FindProductBySkuQuery {
 
     public  Optional<ProductView> execute(String sku) {
         log.info("Execute FindProductBySkuQuery");
-
-        return productCatalogRepository.findBySku(sku);
+        try {
+            return productCatalogRepository.findBySku(sku);
+        } catch (RuntimeException e) {
+            throw  new QueryException("Error executing ProductCatalogRepositoryPort");
+        }
     }
 }

@@ -16,7 +16,6 @@ import java.math.BigDecimal;
  */
 public record UpdateProductCommand(
 
-        @NotBlank(message = "Product ID cannot be null or blank")
         String productId,
 
         @Size(min = 3, max = 200, message = "Product name must be between 3 and 200 characters")
