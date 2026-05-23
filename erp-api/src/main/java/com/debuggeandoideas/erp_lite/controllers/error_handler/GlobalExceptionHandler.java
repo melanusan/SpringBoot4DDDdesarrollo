@@ -96,7 +96,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handlerRuntimeException(
             RuntimeException ex, HttpServletRequest request) {
 
-        log.warn("General error detected");
+        log.warn("General error detected", ex);
 
         return get500Response(request.getRequestURI());
     }

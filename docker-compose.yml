@@ -64,7 +64,7 @@ services:
     container_name: redis-ui
     environment:
       - REDIS_HOSTS=local:redis:6379:0:secret
-      - HTTP_USER=debuggeandoideas
+      - HTTP_USER=debuggeandoideas    
       - HTTP_PASSWORD=secret
     ports:
       - "8081:8081"
@@ -72,7 +72,7 @@ services:
       - redis
     networks:
       - erp-vpc
-  # LocalStack - AWS services emulation
+# LocalStack - AWS services emulation
   localstack:
     image: localstack/localstack:3.8.1
     container_name: erp-localstack
@@ -95,6 +95,24 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: erp-rabbitmq
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: debuggeandoideas
+      RABBITMQ_DEFAULT_PASS: secret
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    networks:
+      - erp-vpc
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_port_connectivity" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   erp-vpc:
