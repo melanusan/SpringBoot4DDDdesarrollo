@@ -44,6 +44,9 @@ public class GmailAdapter implements OrderConfirmEmailServicePort {
             String customerName,
             Integer itemsCount) {
 
+        log.debug("[{}] Executing operation - orderId={}, orderNumber={}, to={}", getClass().getSimpleName(),
+                orderId.value(), orderNumber, email.value());
+
         try {
             MimeMessage mimeMessage = this.mailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
@@ -59,7 +62,8 @@ public class GmailAdapter implements OrderConfirmEmailServicePort {
             messageHelper.setText(html, true);
             this.mailSender.send(mimeMessage);
 
-            log.info("Email sent to: {} successfully", email.value());
+            log.info("[{}] Operation successful - orderId={}, orderNumber={}", getClass().getSimpleName(),
+                    orderId.value(), orderNumber);
         } catch (MessagingException e) {
             log.error("Error sending mail", e);
             throw new RuntimeException(e);

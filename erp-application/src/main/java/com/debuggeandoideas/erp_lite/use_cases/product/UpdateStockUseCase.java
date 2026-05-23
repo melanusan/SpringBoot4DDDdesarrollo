@@ -7,6 +7,7 @@ import com.debuggeandoideas.erp_lite.domain.ports.repositories.ProductRepository
 import com.debuggeandoideas.erp_lite.exceptions.CommandException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,50 +30,54 @@ public class UpdateStockUseCase {
     private final ProductRepositoryPort productRepository;
 
     public void execute(UpdateStockCommand command) {
-        log.info("Updating stock for product: {} by {} units (reason: {})",
-                command.productId(),
-                command.quantity(),
-                command.reason());
+        log.info("[{}] Starting - productId={}, quantity={}, reason={}", getClass().getSimpleName(),
+                command.productId(), command.quantity(), command.reason());
 
+        MDC.put("productId", command.productId());
         try {
             // 1. Find product
             ProductRoot product = findProductById(command.productId());
 
-            log.debug("Current stock: {}", product.getStock().value());
+            log.debug("[{}] Current stock - value={}", getClass().getSimpleName(), product.getStock().value());
 
             // 2. Update stock based on operation
             if (command.isIncrement()) {
                 product.incrementStock(command.absoluteQuantity(), command.reason());
-                log.debug("Stock incremented by {} units", command.absoluteQuantity());
+                log.debug("[{}] Stock incremented - units={}", getClass().getSimpleName(), command.absoluteQuantity());
             } else if (command.isDecrement()) {
                 product.decrementStock(command.absoluteQuantity(), command.reason());
-                log.debug("Stock decremented by {} units", command.absoluteQuantity());
+                log.debug("[{}] Stock decremented - units={}", getClass().getSimpleName(), command.absoluteQuantity());
             }
 
-            log.debug("New stock: {}", product.getStock().value());
+            log.debug("[{}] New stock - value={}", getClass().getSimpleName(), product.getStock().value());
 
             // 3. Persist changes
             productRepository.save(product);
 
-            log.info("Stock update persisted. New stock: {}", product.getStock().value());
+            log.info("[{}] Completed - productId={}, newStock={}", getClass().getSimpleName(),
+                    command.productId(), product.getStock().value());
 
         } catch (IllegalArgumentException iae) {
-            log.error("Invalid stock update", iae);
+            log.error("[{}] Invalid stock update - productId={}", getClass().getSimpleName(),
+                    command.productId(), iae);
             throw new CommandException("Error updating stock: " + iae.getMessage());
         } catch (Exception e) {
-            log.error("Unexpected error updating stock", e);
+            log.error("[{}] Unexpected error updating stock - productId={}", getClass().getSimpleName(),
+                    command.productId(), e);
             throw new CommandException("Failed to update stock: " + e.getMessage());
+        } finally {
+            MDC.clear();
         }
     }
 
     private ProductRoot findProductById(String productId) {
-        log.debug("Finding product by ID: {}", productId);
+        log.debug("[{}] Finding product by ID - productId={}", getClass().getSimpleName(), productId);
 
         ProductId productIdVO = ProductId.of(UUID.fromString(productId));
 
         return productRepository.findAllById(productIdVO)
                 .orElseThrow(() -> {
-                    log.warn("Product not found: {}", productId);
+                    log.warn("[{}] Product not found - productId={}", getClass().getSimpleName(), productId);
                     return new CommandException("Product not found with ID: " + productId);
                 });
     }

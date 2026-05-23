@@ -7,6 +7,7 @@ import com.debuggeandoideas.erp_lite.domain.ports.repositories.OrderRepositoryPo
 import com.debuggeandoideas.erp_lite.exceptions.CommandException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,26 +36,35 @@ public class UpdateOrderStatusUseCase {
     private final CommandHelper commandHelper;
 
     public String execute(UpdateOrderStatusCommand command) {
+        log.info("[{}] Starting - orderId={}, newStatus={}", getClass().getSimpleName(),
+                command.orderId(), command.newStatus());
 
+        MDC.put("orderId", command.orderId());
         try {
             OrderRoot orderRoot = this.commandHelper.findOrderById(command.orderId());
 
-            log.info("Current order current status: {}", orderRoot.getStatus());
+            log.info("[{}] Current status - orderId={}, currentStatus={}", getClass().getSimpleName(),
+                    command.orderId(), orderRoot.getStatus());
 
             this.updateStatus(orderRoot, command.newStatus());
 
             OrderRoot orderSaved = this.orderRepository.save(orderRoot);
 
-            log.info("Order saved current status: {}", orderSaved.getStatus());
+            log.info("[{}] Completed - orderId={}, newStatus={}", getClass().getSimpleName(),
+                    command.orderId(), orderSaved.getStatus());
 
             return orderSaved.getStatus().toString();
 
         } catch (IllegalStateException ise) {
-            log.error("Error updating order status", ise);
+            log.error("[{}] Invalid status transition - orderId={}", getClass().getSimpleName(),
+                    command.orderId(), ise);
             throw new CommandException("Error updating order status");
         } catch (Exception e) {
-            log.error("Error updating order status", e);
+            log.error("[{}] Unexpected error updating order status - orderId={}", getClass().getSimpleName(),
+                    command.orderId(), e);
             throw new CommandException("Unexpected error updating order status");
+        } finally {
+            MDC.clear();
         }
     }
 

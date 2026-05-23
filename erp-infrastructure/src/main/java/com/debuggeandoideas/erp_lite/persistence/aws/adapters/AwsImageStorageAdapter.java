@@ -38,7 +38,7 @@ public class AwsImageStorageAdapter implements ImageStorageServicePort {
            this.s3Client.putObject(putObjRequest, RequestBody.fromBytes(imageData));
 
            final var imgUrl = this.buildUrlImg(key);
-           log.info("Image uploaded successfully in {}.", imgUrl);
+           log.info("[{}] Operation successful - imageUrl={}", getClass().getSimpleName(), imgUrl);
 
            return new ProductImage(imgUrl);
 
@@ -46,7 +46,7 @@ public class AwsImageStorageAdapter implements ImageStorageServicePort {
            log.error("Error uploading image", s3e);
            throw new MyBusinessException("Error uploading image" + s3e.getMessage());
        } catch (Exception e) {
-           log.error("Unexpected uploading deleting image", e);
+           log.error("[{}] Unexpected error uploading image", getClass().getSimpleName(), e);
            throw new MyBusinessException("Error uploading image" + e.getMessage());
        }
     }
@@ -64,10 +64,10 @@ public class AwsImageStorageAdapter implements ImageStorageServicePort {
 
             this.s3Client.deleteObject(deleteObjRequest);
 
-            log.info("Deleted image success{}", img.imageUrl());
+            log.info("[{}] Operation successful - imageUrl={}", getClass().getSimpleName(), img.imageUrl());
 
         } catch (S3Exception s3e) {
-            log.error("Error deleting image", s3e);
+            log.error("[{}] Error deleting image - imageUrl={}", getClass().getSimpleName(), img.imageUrl(), s3e);
             throw new MyBusinessException("Error deleting image" + s3e.getMessage());
         } catch (Exception e) {
             log.error("Unexpected error deleting image", e);
@@ -89,7 +89,7 @@ public class AwsImageStorageAdapter implements ImageStorageServicePort {
 
             final var bytes = this.s3Client.getObjectAsBytes(getObjRequest).asByteArray();
 
-            log.info("Download image: {} bytes", bytes.length);
+            log.info("[{}] Operation successful - bytes={}", getClass().getSimpleName(), bytes.length);
 
             return bytes;
 
@@ -116,7 +116,7 @@ public class AwsImageStorageAdapter implements ImageStorageServicePort {
             return parts[1];
         }
 
-        log.warn("No bucket name found for url: " + url);
+        log.warn("[{}] Bucket not found in URL - url={}", getClass().getSimpleName(), url);
         return url;
     }
 

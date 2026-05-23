@@ -34,7 +34,7 @@ public class JsonPlaceholderCustomerProviderAdapter implements CustomerProviderS
 
     @Override
     public Optional<CustomerInfo> findById(Long id) {
-        log.info("findById: {}", id);
+        log.debug("[{}] Executing operation - customerId={}", getClass().getSimpleName(), id);
 
         try {
             final UserDTO response = this.jsonClient
@@ -42,34 +42,36 @@ public class JsonPlaceholderCustomerProviderAdapter implements CustomerProviderS
                     .uri(endpoint, id)
                     .retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
-                        log.error("Error on client side: {}", req);
+                        log.warn("[{}] External provider 4xx response - customerId={}", getClass().getSimpleName(), id);
                     })
                     .onStatus(HttpStatusCode::is5xxServerError, (req, res) -> {
-                        log.error("Error on server side: {}", req);
+                        log.error("[{}] External integration 5xx failure - customerId={}", getClass().getSimpleName(), id);
                     })
                     .body(UserDTO.class);
 
             if (response == null) {
-                log.warn("No user found");
+                log.warn("[{}] Customer not found in external provider - customerId={}", getClass().getSimpleName(), id);
                 return Optional.empty();
             }
 
-            log.info("User found: {}", response);
+            log.info("[{}] Operation successful - customerId={}, customerName={}", getClass().getSimpleName(),
+                    id, response.name());
 
             return Optional.of(this.customerMapper.toCustomerInfo(response));
 
         } catch (RestClientException rce) {
-            log.error("Error on findById while call API", rce);
+            log.error("[{}] External integration failure fetching customer - customerId={}", getClass().getSimpleName(),
+                    id, rce);
             return Optional.empty();
         } catch (Exception e) {
-            log.error("Error on findById ", e);
+            log.error("[{}] Unexpected error fetching customer - customerId={}", getClass().getSimpleName(), id, e);
             return Optional.empty();
         }
     }
 
     @Override
     public boolean existsById(Long id) {
-        log.info("existsById: {}", id);
+        log.debug("[{}] Executing operation - customerId={}", getClass().getSimpleName(), id);
         return false;
     }
 }

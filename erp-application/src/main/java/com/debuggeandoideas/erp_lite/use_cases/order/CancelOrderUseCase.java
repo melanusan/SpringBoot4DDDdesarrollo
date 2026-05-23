@@ -7,6 +7,7 @@ import com.debuggeandoideas.erp_lite.domain.ports.repositories.OrderRepositoryPo
 import com.debuggeandoideas.erp_lite.exceptions.CommandException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,19 +21,23 @@ public class CancelOrderUseCase {
     private final CommandHelper commandHelper;
 
     public void execute(CancelOrderCommand command) {
+        log.info("[{}] Starting - orderId={}, reason={}", getClass().getSimpleName(),
+                command.orderId(), command.reason());
 
+        MDC.put("orderId", command.orderId());
         try {
-            log.info("Cancel order {}", command.orderId());
-
             OrderRoot orderRoot = this.commandHelper.findOrderById(command.orderId());
 
             orderRoot.cancel(command.reason());
             this.orderRepository.save(orderRoot);
 
-            log.info("Order {} cancelled", command.orderId());
+            log.info("[{}] Completed - orderId={}", getClass().getSimpleName(), command.orderId());
         } catch (Exception e) {
-            log.error("Error on cancel order", e);
+            log.error("[{}] Error cancelling order - orderId={}", getClass().getSimpleName(),
+                    command.orderId(), e);
             throw new CommandException("Error on cancel order");
+        } finally {
+            MDC.clear();
         }
     }
 

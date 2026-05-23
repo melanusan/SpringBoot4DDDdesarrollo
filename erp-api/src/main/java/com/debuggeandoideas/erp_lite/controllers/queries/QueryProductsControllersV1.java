@@ -40,10 +40,12 @@ public class QueryProductsControllersV1 {
     public ResponseEntity<BaseResponseWrapper<ProductView>> getById(
             @Parameter(description = "Identificador único del producto", required = true, example = "abc123")
             @PathVariable String id) {
-        log.info("GET product by id: {}", id);
+        log.info("[{}] Request received - productId={}", getClass().getSimpleName(), id);
 
         ProductView response = this.findProductByIdQuery.execute(id)
                 .orElseThrow(() -> new QueryException("Product with id " + id + " not found"));
+
+        log.info("[{}] Response sent - status=200, productId={}", getClass().getSimpleName(), id);
 
         return ResponseEntity.ok(BaseResponseWrapper.of(response));
     }
@@ -58,10 +60,12 @@ public class QueryProductsControllersV1 {
     public ResponseEntity<BaseResponseWrapper<ProductView>> getBySku(
             @Parameter(description = "Código SKU del producto", required = true, example = "SKU-001")
             @RequestParam String sku) {
-        log.info("GET product by sku: {}", sku);
+        log.info("[{}] Request received - sku={}", getClass().getSimpleName(), sku);
 
         ProductView response = this.findProductBySkuQuery.execute(sku)
                 .orElseThrow(() -> new QueryException("Product with sku " + sku + " not found"));
+
+        log.info("[{}] Response sent - status=200, sku={}", getClass().getSimpleName(), sku);
 
         return ResponseEntity.ok(BaseResponseWrapper.of(response));
     }
@@ -74,14 +78,17 @@ public class QueryProductsControllersV1 {
     })
     @GetMapping(path = "/active")
     public ResponseEntity<BaseResponseWrapper<List<ProductView>>> getActive() {
-        log.info("GET product Active");
+        log.info("[{}] Request received - endpoint=active", getClass().getSimpleName());
 
         List<ProductView> response = this.findProductActiveQuery.execute();
 
         if (response.isEmpty()) {
-            log.info("No active products found");
+            log.info("[{}] Response sent - status=204, result=no active products found",
+                    getClass().getSimpleName());
             return ResponseEntity.noContent().build();
         }
+
+        log.info("[{}] Response sent - status=200, count={}", getClass().getSimpleName(), response.size());
 
         return ResponseEntity.ok(BaseResponseWrapper.of(response));
     }
@@ -95,9 +102,11 @@ public class QueryProductsControllersV1 {
     public ResponseEntity<BaseResponseWrapper<List<ProductView>>> search(
             @Parameter(description = "Texto a buscar en nombre o descripción del producto", required = true, example = "laptop")
             @RequestParam String text) {
-        log.info("GET search: {}", text);
+        log.info("[{}] Request received - text={}", getClass().getSimpleName(), text);
 
         List<ProductView> products = this.findProductByTextQuery.execute(text);
+
+        log.info("[{}] Response sent - status=200, count={}", getClass().getSimpleName(), products.size());
 
         return ResponseEntity.ok(BaseResponseWrapper.of(products));
     }
@@ -111,9 +120,12 @@ public class QueryProductsControllersV1 {
     public ResponseEntity<BaseResponseWrapper<List<ProductView>>> findByCategory(
             @Parameter(description = "Identificador de la categoría a filtrar", required = true, example = "ELECTRONICS")
             @RequestParam String category) {
-        log.info("GET findByCategory: {}", category);
+        log.info("[{}] Request received - category={}", getClass().getSimpleName(), category);
 
         List<ProductView> products = this.findProductByCategory.execute(category);
+
+        log.info("[{}] Response sent - status=200, category={}, count={}", getClass().getSimpleName(),
+                category, products.size());
 
         return ResponseEntity.ok(BaseResponseWrapper.of(products));
     }

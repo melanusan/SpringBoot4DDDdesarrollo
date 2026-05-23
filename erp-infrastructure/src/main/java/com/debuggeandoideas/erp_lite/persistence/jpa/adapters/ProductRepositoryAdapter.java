@@ -23,17 +23,16 @@ public class ProductRepositoryAdapter implements ProductRepositoryPort {
 
     @Override
     public ProductRoot save(ProductRoot product) {
-        log.info("Saving product {}", product);
+        log.debug("[{}] Executing operation - productId={}, sku={}", getClass().getSimpleName(),
+                product.getId().value(), product.getSku().value());
         try {
             ProductEntity productEntity = this.productJpaMapper.toEntity(product);
 
             productEntity.setId(product.getId().value());
 
-            log.info("try to saving product {}", product.getSku());
-
             ProductEntity productSaved = this.productRepository.save(productEntity);
 
-            log.info("saved product SUCCESS {}", productSaved);
+            log.info("[{}] Operation successful - productId={}", getClass().getSimpleName(), productSaved.getId());
 
             return this.productJpaMapper.toDomain(productSaved);
         } catch (Exception e) {

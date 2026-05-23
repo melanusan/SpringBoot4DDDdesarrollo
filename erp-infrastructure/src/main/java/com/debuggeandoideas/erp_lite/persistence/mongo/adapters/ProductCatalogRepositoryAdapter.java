@@ -89,7 +89,7 @@ public class ProductCatalogRepositoryAdapter implements ProductCatalogRepository
         Object raw = this.redisTemplate.opsForList().range(CACHE_PRODUCTS_ACTIVE, 0, -1);
 
         if (raw != null) {
-            log.debug("Found product active");
+            log.debug("[{}] Active products found in cache", getClass().getSimpleName());
             return this.objectMapper.convertValue(raw,
                     this.objectMapper.getTypeFactory().constructCollectionType(List.class, ProductView.class));
         }

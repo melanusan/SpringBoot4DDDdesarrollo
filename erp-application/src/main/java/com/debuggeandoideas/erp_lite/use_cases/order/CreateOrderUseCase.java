@@ -17,6 +17,7 @@ import com.debuggeandoideas.erp_lite.domain.shared.Quantity;
 import com.debuggeandoideas.erp_lite.exceptions.CommandException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +52,9 @@ public class CreateOrderUseCase {
     private final OrderConfirmEmailServicePort emailService;
 
     public String execute(CreateOrderCommand command) {
-        log.info("Creating order {}", command);
+        log.info("[{}] Starting - customerId={}, items={}", getClass().getSimpleName(),
+                command.customerId(), command.items().size());
+        MDC.put("userId", String.valueOf(command.customerId()));
         try {
             Customer customer = this.validateAndGet(command.customerId());
 
@@ -59,36 +62,44 @@ public class CreateOrderUseCase {
 
             OrderNumber orderNumber = this.generateOrderNumber();
 
-            OrderRoot orderRoot =   OrderRoot.create(
+            OrderRoot orderRoot = OrderRoot.create(
                     orderNumber,
                     customer,
                     items,
                     command.createdBy()
             );
 
-            OrderRoot savedOrder = this.orderRepository.save(orderRoot);
+            MDC.put("orderId", orderRoot.getId().value().toString());
+            try {
+                OrderRoot savedOrder = this.orderRepository.save(orderRoot);
 
-            log.info("Saved order with id {}", savedOrder.getId());
+                log.info("[{}] Completed - orderId={}", getClass().getSimpleName(),
+                        savedOrder.getId().value());
 
-            this.sendMail(orderRoot, customer);
+                this.sendMail(orderRoot, customer);
 
-            return orderRoot.getId().value().toString();
+                return orderRoot.getId().value().toString();
+
+            } finally {
+                MDC.clear();
+            }
 
         } catch (IllegalArgumentException iae) {
-            log.error("Invalid data", iae);
+            log.error("[{}] Invalid data for order creation - message={}", getClass().getSimpleName(),
+                    iae.getMessage(), iae);
             throw new CommandException("Error on create order msg: " + iae.getMessage());
         } catch (Exception e) {
-            log.error("Unexpected error", e);
+            log.error("[{}] Unexpected error creating order", getClass().getSimpleName(), e);
             throw new CommandException(e.getMessage());
         }
     }
 
     private Customer validateAndGet(Long customerId) {
-        log.info("Validating customer id {}", customerId);
+        log.info("[{}] Validating customer - customerId={}", getClass().getSimpleName(), customerId);
         var customerInfo = this.customerProviderService.findById(customerId)
                 .orElseThrow(() -> new CommandException("Customer not found is" + customerId));
 
-        log.info("Customer validated with name {}", customerInfo.name());
+        log.info("[{}] Customer validated - customerName={}", getClass().getSimpleName(), customerInfo.name());
 
         return Customer.of(
                 CustomerId.of(customerId),
@@ -97,7 +108,7 @@ public class CreateOrderUseCase {
     }
 
     private List<OrderItem> createOrderItems(List<CreateOrderCommand.OrderItemRequest>commandItems) {
-        log.info("Creating order items");
+        log.info("[{}] Creating order items - count={}", getClass().getSimpleName(), commandItems.size());
 
         return commandItems.stream()
                 .map(this::toOrderItem)
@@ -121,19 +132,20 @@ public class CreateOrderUseCase {
 
     private void publishDomanEvent(OrderRoot order) {
         var events = order.getDomainEvents();
-        log.info("Publishing doman events: {}", events);
+        log.info("[{}] Publishing domain events - count={}", getClass().getSimpleName(), events.size());
         events.forEach(event -> {
-            log.debug("Try to publish event: {}", event);
+            log.debug("[{}] Publishing event - eventType={}", getClass().getSimpleName(), event.getClass().getSimpleName());
             // TODO: send event on queue
         });
 
         order.clearDomainEvents();
-        log.info("Events published SUCCESSFULLY");
+        log.info("[{}] Domain events published successfully", getClass().getSimpleName());
     }
 
     private void sendMail(OrderRoot order, Customer customer) {
         try {
-            log.info("Sending mail: {}", customer.customerName() + "@gamil.com");
+            log.info("[{}] Sending confirmation email - customerName={}, orderId={}",
+                    getClass().getSimpleName(), customer.customerName(), order.getId().value());
             final var mail = Email.of("debuggeandoideas@gmail.com");
 
             this.emailService.sendMail(
@@ -145,7 +157,8 @@ public class CreateOrderUseCase {
                     order.getItems().size()
             );
         } catch (Exception e) {
-            log.error("Error sending mail", e);
+            log.error("[{}] Error sending confirmation email - orderId={}", getClass().getSimpleName(),
+                    order.getId().value(), e);
             throw new CommandException("Error sending mail: " + e.getMessage());
         }
     }

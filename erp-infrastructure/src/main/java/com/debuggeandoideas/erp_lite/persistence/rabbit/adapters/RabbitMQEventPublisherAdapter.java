@@ -20,6 +20,8 @@ public class RabbitMQEventPublisherAdapter implements EventPublisherPort {
 
     @Override
     public void publish(DomainEvent event) {
+        log.debug("[{}] Executing operation - eventType={}", getClass().getSimpleName(),
+                event.getClass().getSimpleName());
 
         if (event instanceof ProductCreated) {
             final var msg = this.toMsg((ProductCreated) event);
@@ -29,9 +31,11 @@ public class RabbitMQEventPublisherAdapter implements EventPublisherPort {
                     RabbitMQConfig.ROUTING_KEY,
                     msg);
 
-            log.info("Published event: {} in exchange: {}", event, RabbitMQConfig.EXCHANGE);
+            log.info("[{}] Operation successful - eventType={}, exchange={}", getClass().getSimpleName(),
+                    event.getClass().getSimpleName(), RabbitMQConfig.EXCHANGE);
         } else {
-            log.warn("Published event {} not supported", event);
+            log.warn("[{}] Unsupported event type - eventType={}", getClass().getSimpleName(),
+                    event.getClass().getSimpleName());
             throw new MyBusinessException("Event is not supported");
         }
     }

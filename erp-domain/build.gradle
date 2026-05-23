@@ -1,4 +1,7 @@
 dependencies {
-    // Dependencias del dominio
+    // Java puro — sin dependencias de framework
     implementation project(':erp-common')
+
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
 }

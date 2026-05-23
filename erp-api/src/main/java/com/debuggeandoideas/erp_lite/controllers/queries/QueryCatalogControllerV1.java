@@ -42,12 +42,14 @@ public class QueryCatalogControllerV1 {
     public ResponseEntity<BaseResponseWrapper<CatalogView>> getByType(
             @Parameter(description = "Tipo de catálogo (ej. CATEGORY, CURRENCY)", required = true, example = "CATEGORY")
             @PathVariable String type) {
-        log.info("GET catalog by type: {}", type);
+        log.info("[{}] Request received - type={}", getClass().getSimpleName(), type);
 
         CatalogType catalogType = CatalogType.valueOf(type.toUpperCase());
 
         CatalogView response = this.findCatalogByTypeQuery.execute(catalogType)
                 .orElseThrow(() -> new QueryException("Catalog with type " + type + " not found"));
+
+        log.info("[{}] Response sent - status=200, type={}", getClass().getSimpleName(), type);
 
         return ResponseEntity.ok(BaseResponseWrapper.of(response));
     }
@@ -60,11 +62,14 @@ public class QueryCatalogControllerV1 {
     public ResponseEntity<BaseResponseWrapper<List<ItemsView>>> getItemsByType(
             @Parameter(description = "Tipo de catálogo (ej. CATEGORY, CURRENCY)", required = true, example = "CATEGORY")
             @PathVariable String type) {
-        log.info("GET catalog items by type: {}", type);
+        log.info("[{}] Request received - type={}", getClass().getSimpleName(), type);
 
         CatalogType catalogType = CatalogType.valueOf(type.toUpperCase());
 
         List<ItemsView> response = this.findCatalogItemsByTypeQuery.execute(catalogType);
+
+        log.info("[{}] Response sent - status=200, type={}, items={}", getClass().getSimpleName(),
+                type, response.size());
 
         return ResponseEntity.ok(BaseResponseWrapper.of(response));
     }
@@ -80,12 +85,14 @@ public class QueryCatalogControllerV1 {
             @PathVariable String type,
             @Parameter(description = "Código del ítem dentro del catálogo", required = true, example = "ELECTRONICS")
             @RequestParam String code) {
-        log.info("GET catalog item by type: {} and code: {}", type, code);
+        log.info("[{}] Request received - type={}, code={}", getClass().getSimpleName(), type, code);
 
         CatalogType catalogType = CatalogType.valueOf(type.toUpperCase());
 
         ItemsView response = this.findCatalogItemByCodeQuery.execute(catalogType, code)
                 .orElseThrow(() -> new QueryException("Item with code " + code + " not found for type " + type));
+
+        log.info("[{}] Response sent - status=200, type={}, code={}", getClass().getSimpleName(), type, code);
 
         return ResponseEntity.ok(BaseResponseWrapper.of(response));
     }

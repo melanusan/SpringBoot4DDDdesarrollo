@@ -1,3 +1,11 @@
+plugins {
+    id 'java-library'
+}
+
 dependencies {
-    // Dependencias comunes para todos los módulos se heredan del build.gradle raíz
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+
+    api 'org.springframework.boot:spring-boot-starter-validation'
+
 }

@@ -29,7 +29,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBusinessException(
             MyBusinessException ex, HttpServletRequest request) {
 
-        log.warn("Rule MyBusinessException violation detected");
+        log.warn("[{}] Business exception caught - uri={}, message={}", getClass().getSimpleName(),
+                request.getRequestURI(), ex.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
@@ -48,7 +49,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleCommandException(
             CommandException ex, HttpServletRequest request) {
 
-        log.warn("Rule CommandException violation detected");
+        log.warn("[{}] Command exception caught - uri={}, message={}", getClass().getSimpleName(),
+                request.getRequestURI(), ex.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_CONTENT)
@@ -67,13 +69,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleQueryException(
             QueryException ex, HttpServletRequest request) {
 
-        log.warn("Rule QueryException violation detected");
+        log.warn("[{}] Query exception caught - uri={}, message={}", getClass().getSimpleName(),
+                request.getRequestURI(), ex.getMessage());
 
         boolean isInfraFailure = ex.getCause() instanceof RuntimeException;
 
         if (isInfraFailure) {
 
-            log.error("Rule QueryException by infrastructure detected");
+            log.error("[{}] Infrastructure failure on query - uri={}", getClass().getSimpleName(),
+                    request.getRequestURI(), ex);
             return get500Response(request.getRequestURI());
 
         } else {
@@ -96,7 +100,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handlerRuntimeException(
             RuntimeException ex, HttpServletRequest request) {
 
-        log.warn("General error detected", ex);
+        log.error("[{}] Unhandled error caught - uri={}", getClass().getSimpleName(),
+                request.getRequestURI(), ex);
 
         return get500Response(request.getRequestURI());
     }

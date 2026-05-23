@@ -1,6 +1,7 @@
 package com.debuggeandoideas.erp_lite.security.configs;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -22,6 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static com.debuggeandoideas.erp_lite.security.utils.SecurityRouterConstants.*;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -92,8 +94,8 @@ public class SecurityFilterConfigs {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             var authorities = grantedConverter.convert(jwt);
-            System.out.println("=== Authorities: " + authorities);
-            System.out.println("=== Claims: " + jwt.getClaims());
+            log.debug("[{}] JWT convertido - authorities={}, claims={}", getClass().getSimpleName(),
+                    authorities, jwt.getClaims().keySet());
             return authorities;
         });
 

@@ -52,7 +52,8 @@ public class CommandProductControllerV1 {
             @Parameter(description = "Imagen del producto", required = true)
             @RequestPart(value = "image") MultipartFile img) throws IOException {
 
-        log.info("POST product");
+        log.info("[{}] Request received - sku={}, createdBy={}", getClass().getSimpleName(),
+                productCommandReq.sku(), productCommandReq.createdBy());
 
         var command = new CreateProductCommand(
                 productCommandReq.sku(),
@@ -68,6 +69,8 @@ public class CommandProductControllerV1 {
         );
 
         String productId = this.createProductUseCase.execute(command);
+
+        log.info("[{}] Response sent - status=201, productId={}", getClass().getSimpleName(), productId);
 
         return ResponseEntity.created(URI.create(ApiPaths.COMMANDS_PRODUCTS + "/" + productId)).build();
 
@@ -89,7 +92,7 @@ public class CommandProductControllerV1 {
             @Valid @RequestPart(value = "product") UpdateProductCommand productCommandReq,
             @Parameter(description = "Nueva imagen del producto", required = true)
             @RequestPart(value = "image") MultipartFile img) throws IOException {
-        log.info("PUT product");
+        log.info("[{}] Request received - productId={}", getClass().getSimpleName(), id);
 
         var command = new UpdateProductCommand(
                 id,
@@ -102,6 +105,8 @@ public class CommandProductControllerV1 {
         );
 
         this.updateProductUseCase.execute(command);
+
+        log.info("[{}] Response sent - status=204, productId={}", getClass().getSimpleName(), id);
 
         return ResponseEntity.noContent().build();
     }
@@ -117,11 +122,14 @@ public class CommandProductControllerV1 {
     public ResponseEntity<Void> patchProductDeactivate(
             @Parameter(description = "Identificador único del producto", required = true, example = "abc123")
             @PathVariable String id) {
-        log.info("PATCH product deactivate");
+        log.info("[{}] Request received - productId={}", getClass().getSimpleName(), id);
 
         var command = new DeactivateProductCommand(id);
 
         this.deactivateProductUseCase.execute(command);
+
+        log.info("[{}] Response sent - status=204, productId={}", getClass().getSimpleName(), id);
+
         return ResponseEntity.noContent().build();
     }
 
@@ -139,7 +147,8 @@ public class CommandProductControllerV1 {
             @PathVariable String id,
             @Parameter(description = "Comando con la cantidad y motivo del ajuste de stock", required = true)
             @Valid @RequestBody UpdateStockCommand stockCommand) {
-        log.info("PATCH product stock");
+        log.info("[{}] Request received - productId={}, quantity={}", getClass().getSimpleName(),
+                id, stockCommand.quantity());
 
         var command = new UpdateStockCommand(
                 id,
@@ -148,6 +157,9 @@ public class CommandProductControllerV1 {
         );
 
         this.updateStockUseCase.execute(command);
+
+        log.info("[{}] Response sent - status=204, productId={}", getClass().getSimpleName(), id);
+
         return ResponseEntity.noContent().build();
     }
 

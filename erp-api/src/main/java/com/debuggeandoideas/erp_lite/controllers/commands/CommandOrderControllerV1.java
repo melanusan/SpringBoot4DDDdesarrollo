@@ -45,11 +45,14 @@ public class CommandOrderControllerV1 {
             @Parameter(description = "Datos de la orden a crear", required = true)
             @Valid @RequestBody CreateOrderCommand createOrderCommand){
 
-        log.info("POST order");
+        log.info("[{}] Request received - customerId={}, items={}", getClass().getSimpleName(),
+                createOrderCommand.customerId(), createOrderCommand.items().size());
 
-        String productId = this.createOrderUseCase.execute(createOrderCommand);
+        String orderId = this.createOrderUseCase.execute(createOrderCommand);
 
-        return ResponseEntity.created(URI.create(ApiPaths.COMMANDS_ORDERS + "/" + productId )).build();
+        log.info("[{}] Response sent - status=201, orderId={}", getClass().getSimpleName(), orderId);
+
+        return ResponseEntity.created(URI.create(ApiPaths.COMMANDS_ORDERS + "/" + orderId)).build();
 
     }
 
@@ -67,11 +70,13 @@ public class CommandOrderControllerV1 {
             @Parameter(description = "Motivo de la cancelación", required = true, example = "Cliente solicitó cancelación")
             @RequestParam String reason){
 
-        log.info("PATCH cancel order");
+        log.info("[{}] Request received - orderId={}, reason={}", getClass().getSimpleName(), id, reason);
 
         var command = new CancelOrderCommand(id, reason);
 
         this.cancelOrderUseCase.execute(command);
+
+        log.info("[{}] Response sent - status=204, orderId={}", getClass().getSimpleName(), id);
 
         return ResponseEntity.noContent().build();
 
@@ -91,11 +96,13 @@ public class CommandOrderControllerV1 {
             @Parameter(description = "Nuevo estado de la orden", required = true, example = "SHIPPED")
             @RequestParam String status){
 
-        log.info("PATCH order status");
+        log.info("[{}] Request received - orderId={}, newStatus={}", getClass().getSimpleName(), id, status);
 
         var command = new UpdateOrderStatusCommand(id, status);
 
         this.updateOrderStatusUseCase.execute(command);
+
+        log.info("[{}] Response sent - status=204, orderId={}", getClass().getSimpleName(), id);
 
         return ResponseEntity.noContent().build();
 

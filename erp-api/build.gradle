@@ -3,15 +3,20 @@ plugins {
 }
 
 dependencies {
-    // Spring Web solo para el módulo API
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    //Open API
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.3")
-
-    // Dependencias de otros módulos
     implementation project(':erp-common')
     implementation project(':erp-domain')
     implementation project(':erp-application')
     implementation project(':erp-infrastructure')
+
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+    implementation libs.mapstruct
+    annotationProcessor libs.mapstruct.processor
+    implementation libs.lombok.mapstruct
+
+    // Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // OpenAPI
+    implementation libs.springdoc
 }

@@ -8,6 +8,7 @@ import com.debuggeandoideas.erp_lite.domain.shared.Money;
 import com.debuggeandoideas.erp_lite.exceptions.CommandException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,13 +35,15 @@ public class UpdateProductUseCase {
     private final ImageStorageServicePort imageStorageService;
 
     public void execute(UpdateProductCommand command) {
-        log.info("Updating product: {}", command.productId());
+        log.info("[{}] Starting - productId={}", getClass().getSimpleName(), command.productId());
 
+        MDC.put("productId", command.productId());
         try {
             // 1. Find product
             ProductRoot product = findProductById(command.productId());
 
-            log.debug("Current product: SKU={}, Name={}",
+            log.debug("[{}] Current product - sku={}, name={}",
+                    getClass().getSimpleName(),
                     product.getSku().value(),
                     product.getName().value());
 
@@ -70,41 +73,45 @@ public class UpdateProductUseCase {
             // 4. Update product
             product.update(name, description, price, category, finalImage);
 
-            log.debug("Product updated in domain");
+            log.debug("[{}] Product updated in domain", getClass().getSimpleName());
 
             // 5. Persist changes
             productRepository.save(product);
 
-            log.info("Product update persisted");
+            log.info("[{}] Completed - productId={}", getClass().getSimpleName(), command.productId());
 
         } catch (IllegalArgumentException iae) {
-            log.error("Invalid data for product update", iae);
+            log.error("[{}] Invalid data for product update - productId={}", getClass().getSimpleName(),
+                    command.productId(), iae);
             throw new CommandException("Error updating product: " + iae.getMessage());
         } catch (Exception e) {
-            log.error("Unexpected error updating product", e);
+            log.error("[{}] Unexpected error updating product - productId={}", getClass().getSimpleName(),
+                    command.productId(), e);
             throw new CommandException("Failed to update product: " + e.getMessage());
+        } finally {
+            MDC.clear();
         }
     }
 
     private ProductRoot findProductById(String productId) {
-        log.debug("Finding product by ID: {}", productId);
+        log.debug("[{}] Finding product by ID - productId={}", getClass().getSimpleName(), productId);
 
         ProductId productIdVO = ProductId.of(UUID.fromString(productId));
 
         return productRepository.findAllById(productIdVO)
                 .orElseThrow(() -> {
-                    log.warn("Product not found: {}", productId);
+                    log.warn("[{}] Product not found - productId={}", getClass().getSimpleName(), productId);
                     return new CommandException("Product not found with ID: " + productId);
                 });
     }
 
     private ProductImage updateImage(UpdateProductCommand command, ProductImage oldImage) {
         if (!command.hasImage()) {
-            log.debug("No image update requested");
+            log.debug("[{}] No image update requested", getClass().getSimpleName());
             return null;
         }
 
-        log.debug("Uploading new image: {}", command.imageName());
+        log.debug("[{}] Uploading new image - imageName={}", getClass().getSimpleName(), command.imageName());
 
         try {
             // Upload new image
@@ -113,19 +120,19 @@ public class UpdateProductUseCase {
                     command.imageData()
             );
 
-            log.info("New image uploaded: {}", newImage.imageUrl());
+            log.info("[{}] New image uploaded - imageUrl={}", getClass().getSimpleName(), newImage.imageUrl());
 
             // Delete old image (if exists)
             if (oldImage != null) {
-
-            imageStorageService.delete(oldImage);
-            log.debug("Old image deleted: {}", oldImage.imageUrl());
+                imageStorageService.delete(oldImage);
+                log.debug("[{}] Old image deleted - imageUrl={}", getClass().getSimpleName(), oldImage.imageUrl());
             }
 
             return newImage;
 
         } catch (Exception e) {
-            log.error("Failed to upload new image", e);
+            log.error("[{}] Failed to upload new image - imageName={}", getClass().getSimpleName(),
+                    command.imageName(), e);
             throw new CommandException("Failed to upload product image: " + e.getMessage());
         }
     }

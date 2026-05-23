@@ -3,33 +3,37 @@ plugins {
 }
 
 dependencies {
-    // General modules dependencies
-    api project(':erp-common')
-    api project(':erp-domain')
-    api project(':erp-application')
+    implementation project(':erp-common')
+    implementation project(':erp-domain')
+    implementation project(':erp-application')
 
-    //SQL
-    api 'org.postgresql:postgresql:42.7.8'
-    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+    implementation libs.mapstruct
+    annotationProcessor libs.mapstruct.processor
+    implementation libs.lombok.mapstruct
 
-    //Mongo
-    api 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    // SQL
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation libs.postgresql
 
-    //Redis
-    api 'org.springframework.boot:spring-boot-starter-data-redis'
-    api 'org.springframework.boot:spring-boot-starter-cache'
+    // MongoDB
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
-    //AWS
-    api 'software.amazon.awssdk:s3:2.41.0'
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 
-    //Rest and web client
-    api 'org.springframework.boot:spring-boot-starter-web'
+    // AWS
+    implementation libs.aws.s3
 
-    //Mail and HTML
-    api 'org.springframework.boot:spring-boot-starter-mail'
-    api 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    // REST client
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    //Rabbit
-    api 'org.springframework.boot:spring-boot-starter-amqp'
+    // Mail y HTML
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
+    // RabbitMQ
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
 }

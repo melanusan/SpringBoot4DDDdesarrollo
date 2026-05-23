@@ -29,12 +29,12 @@ public class CatalogRepositoryAdapter implements CatalogRepositoryPort {
 
     @Override
     public Optional<CatalogView> findByType(CatalogType type) {
-        log.info("Find catalog by type: {}", type);
+        log.debug("[{}] Executing operation - type={}", getClass().getSimpleName(), type);
 
         Object raw = redisTemplate.opsForValue().get(CACHE_CATALOGS_BY_TYPE + type.name()); //NUEVA LINEA
         if (raw != null) {
             CatalogView cached = objectMapper.convertValue(raw, CatalogView.class); //NUEVA LINEA
-            log.info("Found catalog in cache: {}", cached);
+            log.debug("[{}] Catalog found in cache - type={}", getClass().getSimpleName(), type);
             return Optional.of(cached);
         }
 
@@ -44,14 +44,15 @@ public class CatalogRepositoryAdapter implements CatalogRepositoryPort {
 
     @Override
     public List<ItemsView> findItemsByType(CatalogType type) {
-        log.info("Find items catalog by type: {}", type);
+        log.debug("[{}] Executing operation - type={}", getClass().getSimpleName(), type);
 
         Object raw = this.redisTemplate.opsForValue().get(CACHE_CATALOGS_BY_TYPE + type.name()); //NUEVA LINEA
 
         if (raw != null) {
             CatalogView cached = objectMapper.convertValue(raw, CatalogView.class); //NUEVA LINEA
 
-            log.info("Found catalog items in cache, total: {}", cached.items().size());
+            log.debug("[{}] Catalog items found in cache - type={}, total={}", getClass().getSimpleName(),
+                    type, cached.items().size());
             return cached.items();
         }
 
@@ -65,7 +66,7 @@ public class CatalogRepositoryAdapter implements CatalogRepositoryPort {
 
     @Override
     public Optional<ItemsView> findItemByTypeAndCode(CatalogType type, String code) {
-        log.info("Find items catalog by type: {} & code: {}", type, code);
+        log.debug("[{}] Executing operation - type={}, code={}", getClass().getSimpleName(), type, code);
 
         return catalogRepository.findByCatalogType(type)
                 .flatMap(doc -> doc.getItems()

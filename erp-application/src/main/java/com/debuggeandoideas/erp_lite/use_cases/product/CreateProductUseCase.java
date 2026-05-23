@@ -9,6 +9,7 @@ import com.debuggeandoideas.erp_lite.domain.shared.Money;
 import com.debuggeandoideas.erp_lite.exceptions.CommandException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,8 @@ public class CreateProductUseCase {
 
 
     public String execute(CreateProductCommand command) {
-        log.info("Creating product with SKU: {}", command.sku());
+        log.info("[{}] Starting - sku={}, createdBy={}", getClass().getSimpleName(),
+                command.sku(), command.createdBy());
 
         try {
             validateSkuUniqueness(command.sku());
@@ -59,21 +61,30 @@ public class CreateProductUseCase {
                     command.createdBy()
             );
 
-            log.debug("Product created in domain with ID: {}", product.getId().value());
+            log.debug("[{}] Product created in domain - productId={}", getClass().getSimpleName(),
+                    product.getId().value());
 
-            ProductRoot savedProduct = productRepository.save(product);
+            MDC.put("productId", product.getId().value().toString());
+            try {
+                ProductRoot savedProduct = productRepository.save(product);
 
-            log.info("Product persisted with ID: {}", savedProduct.getId().value());
+                log.info("[{}] Completed - productId={}", getClass().getSimpleName(),
+                        savedProduct.getId().value());
 
-            this.sendEventMessage(product);
+                this.sendEventMessage(product);
 
-            return savedProduct.getId().value().toString();
+                return savedProduct.getId().value().toString();
+            } finally {
+                MDC.clear();
+            }
 
         } catch (IllegalArgumentException iae) {
-            log.error("Invalid data for product creation");
+            log.error("[{}] Invalid data for product creation - sku={}", getClass().getSimpleName(),
+                    command.sku(), iae);
             throw new CommandException("Error creating product: " + iae.getMessage());
         } catch (Exception e) {
-            log.error("Unexpected error creating product", e);
+            log.error("[{}] Unexpected error creating product - sku={}", getClass().getSimpleName(),
+                    command.sku(), e);
             throw new CommandException("Failed to create product: " + e.getMessage());
         }
     }
@@ -89,11 +100,11 @@ public class CreateProductUseCase {
 
     private ProductImage uploadImg(CreateProductCommand command) {
         if (!command.hasImage()) {
-            log.info("Product image is empty");
+            log.info("[{}] No image provided - sku={}", getClass().getSimpleName(), command.sku());
             return null;
         }
 
-        log.info("Uploading image with SKU: {}", command.sku());
+        log.info("[{}] Uploading image - sku={}", getClass().getSimpleName(), command.sku());
 
         try {
             return this.imageStorageService.upload(
@@ -101,7 +112,8 @@ public class CreateProductUseCase {
                     command.imageData()
             );
         } catch (Exception e) {
-            log.error("Unexpected error uploading image with SKU", e);
+            log.error("[{}] Unexpected error uploading image - sku={}", getClass().getSimpleName(),
+                    command.sku(), e);
             throw new CommandException("Error uploading image with SKU: " + e.getMessage());
         }
     }
@@ -112,6 +124,7 @@ public class CreateProductUseCase {
 
         product.clearDomainEvents();
 
-        log.info("Event send successfully");
+        log.info("[{}] Event published successfully - productId={}", getClass().getSimpleName(),
+                product.getId().value());
     }
 }
