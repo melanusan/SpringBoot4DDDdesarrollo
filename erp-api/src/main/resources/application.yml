@@ -47,9 +47,6 @@ spring:
       time-to-live: 86400000
       cache-null-values: false
 
-  mongodb:
-    uri: mongodb://debuggeandoideas:secret@localhost:27017/erp_catalog_db?authSource=admin
-
   web:
     error:
       include-message: ${ERROR_INCLUDE_MESSAGE:always}
@@ -73,6 +70,8 @@ spring:
             required: true
           ssl:
             trust: smtp.gmail.com
+  mongodb:
+    uri: mongodb://debuggeandoideas:secret@localhost:27017/erp_catalog_db?authSource=admin
 
 # Server
 server:

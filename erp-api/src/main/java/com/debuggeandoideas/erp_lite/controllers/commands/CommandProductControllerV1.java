@@ -49,10 +49,8 @@ public class CommandProductControllerV1 {
     public ResponseEntity<Void> postProduct(
             @Parameter(description = "Datos del producto a crear", required = true)
             @Valid @RequestPart(value = "product") CreateProductCommand productCommandReq,
-
             @Parameter(description = "Imagen del producto", required = true)
-            @RequestPart(value = "image") MultipartFile img
-    ) throws IOException {
+            @RequestPart(value = "image") MultipartFile img) throws IOException {
 
         log.info("POST product");
 
