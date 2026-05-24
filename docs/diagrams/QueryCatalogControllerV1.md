@@ -1,0 +1,38 @@
+# Diagrama de secuencia — QueryCatalogControllerV1
+
+Descripción: Secuencia para obtener catálogos y sus ítems por tipo y código. Capas: `erp-api`, `erp-application` (queries), `erp-domain` (views, enums), `erp-infrastructure` (repos), `erp-common`.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client as Cliente
+    participant API as "erp-api\nQueryCatalogControllerV1"
+    participant App as "erp-application\nFindCatalogByTypeQuery / FindCatalogItemsByTypeQuery / FindCatalogItemByCodeQuery"
+    participant Domain as "erp-domain\nCatalogView / ItemsView / CatalogType"
+    participant Infra as "erp-infrastructure\nCatalogRepository"
+    participant Common as "erp-common\nDTOs / Exceptions (QueryException)"
+
+    Note over API,App: Obtener catálogo por tipo (GET /{type})
+    Client->>API: GET /queries/catalogs/{type}
+    API->>App: FindCatalogByTypeQuery.execute(CatalogType)
+    App->>Infra: CatalogRepository.findByType(type)
+    Infra-->>App: Optional<CatalogView>
+    App-->>API: CatalogView or throw QueryException
+    API-->>Client: 200 OK { CatalogView }
+
+    Note over API,App: Obtener ítems por tipo (GET /{type}/items)
+    Client->>API: GET /queries/catalogs/{type}/items
+    API->>App: FindCatalogItemsByTypeQuery.execute(CatalogType)
+    App->>Infra: CatalogRepository.findItemsByType(type)
+    Infra-->>App: List<ItemsView>
+    App-->>API: List<ItemsView>
+    API-->>Client: 200 OK [ ItemsView... ]
+
+    Note over API,App: Obtener ítem por tipo y código (GET /{type}/items?code=...)
+    Client->>API: GET /queries/catalogs/{type}/items?code=ELECTRONICS
+    API->>App: FindCatalogItemByCodeQuery.execute(CatalogType, code)
+    App->>Infra: CatalogRepository.findItemByTypeAndCode(type, code)
+    Infra-->>App: Optional<ItemsView>
+    App-->>API: ItemsView or throw QueryException
+    API-->>Client: 200 OK { ItemsView }
+```

@@ -1,0 +1,68 @@
+# Diagrama detallado — QueryProductsControllersV1
+
+Incluye: textos del flujo original, nombres de variables usados en el código, y clases base relevantes.
+
+Variables relevantes en `QueryProductsControllersV1`:
+
+- `id` : `String` (path variable)
+- `sku` : `String` (request param)
+- `text` : `String` (search param)
+- `category` : `String` (request param)
+- `response` : `ProductView` or `List<ProductView>`
+
+Clases base y estructuras importantes:
+
+- `ProductView` : DTO/view
+- `ProductRoot` : domain aggregate `extends AggregateRoot<ProductId> -> Entity<ProductId>`
+- Repository port: `ProductCatalogRepositoryPort` / `ProductRepository`
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client as Cliente
+    participant API as "erp-api\nQueryProductsControllersV1\n(vars: id:String, sku:String, text:String, category:String, response:ProductView/List<ProductView>)"
+    participant App as "erp-application\nFindProductByIdQuery.execute(id)\nFindProductBySkuQuery.execute(sku)\nFindProductActiveQuery.execute()\nFindProductByTextQuery.execute(text)\nFindProductByCategory.execute(category)"
+    participant Domain as "erp-domain\nProductView (DTO)\nProductRoot extends AggregateRoot<ProductId> -> Entity<ProductId>"
+    participant Infra as "erp-infrastructure\nProductRepository / ProductCatalogRepositoryPort"
+    participant Common as "erp-common\nDTOs / Exceptions (QueryException)"
+
+    Note over API,App: Obtener producto por ID (GET /{id})
+    Client->>API: GET /queries/products/{id}
+    API->>App: FindProductByIdQuery.execute(id)
+    App->>Infra: ProductRepository.findById(id)
+    Infra-->>App: Optional<ProductView>
+    App-->>API: response: ProductView or throw QueryException
+    API-->>Client: 200 OK { ProductView }
+
+    Note over API,App: Obtener por SKU (GET ?sku=...)
+    Client->>API: GET /queries/products?sku={sku}
+    API->>App: FindProductBySkuQuery.execute(sku)
+    App->>Infra: ProductRepository.findBySku(sku)
+    Infra-->>App: Optional<ProductView>
+    App-->>API: response: ProductView
+    API-->>Client: 200 OK { ProductView }
+
+    Note over API,App: Listar productos activos (GET /active)
+    Client->>API: GET /queries/products/active
+    API->>App: FindProductActiveQuery.execute()
+    App->>Infra: ProductRepository.findActive()
+    Infra-->>App: List<ProductView>
+    App-->>API: response: List<ProductView> (or empty -> 204 No Content)
+    API-->>Client: 200 OK / 204 No Content
+
+    Note over API,App: Búsqueda por texto (GET /search?text=...)
+    Client->>API: GET /queries/products/search?text={text}
+    API->>App: FindProductByTextQuery.execute(text)
+    App->>Infra: ProductRepository.searchByText(text)
+    Infra-->>App: List<ProductView>
+    App-->>API: response: List<ProductView>
+    API-->>Client: 200 OK [ ProductView... ]
+
+    Note over API,App: Filtrar por categoría (GET ?category=...)
+    Client->>API: GET /queries/products?category={category}
+    API->>App: FindProductByCategory.execute(category)
+    App->>Infra: ProductRepository.findByCategory(category)
+    Infra-->>App: List<ProductView>
+    App-->>API: response: List<ProductView>
+    API-->>Client: 200 OK [ ProductView... ]
+```

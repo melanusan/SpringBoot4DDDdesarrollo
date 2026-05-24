@@ -1,0 +1,71 @@
+# Diagrama detallado — CommandProductControllerV1
+
+Incluye: textos del flujo original, nombres de variables usados en el código, y clases base de las entidades/agregados.
+
+Variables relevantes en `CommandProductControllerV1`:
+
+- `productCommandReq` : `CreateProductCommand` or `UpdateProductCommand` (request part)
+- `img` : `MultipartFile` (request part)
+- `command` : `CreateProductCommand` / `UpdateProductCommand` (constructed inside controller)
+- `productId` : `String` (returned id after creation)
+- `id` : `String` (path variable)
+- `stockCommand` : `UpdateStockCommand` (request body for stock updates)
+
+Clases base y estructuras importantes:
+
+- `CreateProductCommand`, `UpdateProductCommand`, `UpdateStockCommand` : `record`
+- `ProductRoot` : extends `AggregateRoot<ProductId>` -> `Entity<ProductId>`
+- `ProductImage` : value object (likely class under domain/entities/product)
+- Repository port: `ProductRepository` / `ProductCatalogRepositoryPort`
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client as Cliente
+    participant API as "erp-api\nCommandProductControllerV1\n(vars: productCommandReq:CreateProductCommand/UpdateProductCommand, img:MultipartFile, command:CreateProductCommand/UpdateProductCommand, productId:String, id:String, stockCommand:UpdateStockCommand)"
+    participant App as "erp-application\nCreateProductUseCase.execute(CreateProductCommand)\nUpdateProductUseCase.execute(UpdateProductCommand)\nDeactivateProductUseCase.execute(DeactivateProductCommand)\nUpdateStockUseCase.execute(UpdateStockCommand)"
+    participant Domain as "erp-domain\nProductRoot (Product aggregate)\nextends AggregateRoot<ProductId> -> Entity<ProductId]\nProductImage (value object)"
+    participant Infra as "erp-infrastructure\nProductRepository / ImageStorageService"
+    participant Common as "erp-common\nCommands: CreateProductCommand/UpdateProductCommand/UpdateStockCommand/DeactivateProductCommand"
+
+    Note over API,App: Crear producto (POST multipart)
+    Client->>API: POST /commands/products (product: productCommandReq, image: img)
+    API->>Common: deserializar productCommandReq, validar, mapear image bytes -> command
+    API->>App: CreateProductUseCase.execute(command /* CreateProductCommand(sku, name, ...) */)
+    App->>Domain: ProductRoot.create(sku, name, description, price, stock, category, image, createdBy)
+    Domain->>Infra: ProductRepository.save(productRoot)
+    Infra-->>Domain: persisted Product id
+    Domain-->>App: productRoot (with id)
+    App-->>API: returns productId
+    API-->>Client: 201 Created Location: /commands/products/{productId}
+
+    Note over API,App: Actualizar producto (PUT /{id})
+    Client->>API: PUT /commands/products/{id} (product: UpdateProductCommand, image: img)
+    API->>App: UpdateProductUseCase.execute(command /* UpdateProductCommand */)
+    App->>Infra: ProductRepository.findById(id)
+    Infra-->>App: productRoot
+    App->>Domain: productRoot.update(name, description, price, category, image)
+    Domain->>Infra: ProductRepository.save(productRoot)
+    App-->>API: void
+    API-->>Client: 204 No Content
+
+    Note over API,App: Actualizar stock (PATCH /{id}/stock)
+    Client->>API: PATCH /commands/products/{id}/stock { stockCommand: UpdateStockCommand }
+    API->>App: UpdateStockUseCase.execute(new UpdateStockCommand(id, quantity, reason))
+    App->>Infra: ProductRepository.findById(id)
+    Infra-->>App: productRoot
+    App->>Domain: productRoot.incrementStock() or decrementStock() based on quantity
+    Domain->>Infra: ProductRepository.save(productRoot)
+    App-->>API: void
+    API-->>Client: 204 No Content
+
+    Note over API,App: Desactivar producto (PATCH /{id}/deactivate)
+    Client->>API: PATCH /commands/products/{id}/deactivate
+    API->>App: DeactivateProductUseCase.execute(new DeactivateProductCommand(id))
+    App->>Infra: ProductRepository.findById(id)
+    Infra-->>App: productRoot
+    App->>Domain: productRoot.deactivate()
+    Domain->>Infra: ProductRepository.save(productRoot)
+    App-->>API: void
+    API-->>Client: 204 No Content
+```

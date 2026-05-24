@@ -1,0 +1,55 @@
+# Diagrama de secuencia — CommandProductControllerV1
+
+Descripción: Secuencia para crear, actualizar, desactivar y actualizar stock de productos. Capas: `erp-api`, `erp-application`, `erp-domain`, `erp-infrastructure`, `erp-common`.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client as Cliente
+    participant API as "erp-api\nCommandProductControllerV1"
+    participant App as "erp-application\nCreateProductUseCase / UpdateProductUseCase / DeactivateProductUseCase / UpdateStockUseCase"
+    participant Domain as "erp-domain\nProductAggregate / ProductFactory"
+    participant Infra as "erp-infrastructure\nProductRepository / ImageStorage"
+    participant Common as "erp-common\nCommands / DTOs"
+
+    Note over API,App: Crear producto (POST multipart)
+    Client->>API: POST /commands/products (product: CreateProductCommand, image file)
+    API->>Common: deserializar + validar + mapear bytes imagen
+    API->>App: CreateProductUseCase.execute(CreateProductCommand + image bytes)
+    App->>Domain: ProductFactory.create(...) -> ProductAggregate
+    Domain->>Infra: ProductRepository.save(ProductAggregate)
+    Infra-->>Domain: persisted Product id
+    Domain-->>App: ProductAggregate (con id)
+    App-->>API: retorna id
+    API-->>Client: 201 Created Location: /commands/products/{id}
+
+    Note over API,App: Actualizar producto (PUT /{id})
+    Client->>API: PUT /commands/products/{id} (UpdateProductCommand + image)
+    API->>App: UpdateProductUseCase.execute(UpdateProductCommand)
+    App->>Infra: ProductRepository.findById(id)
+    Infra-->>App: ProductAggregate
+    App->>Domain: ProductAggregate.update(...) (incluye imagen)
+    Domain->>Infra: ProductRepository.save(ProductAggregate)
+    App-->>API: void
+    API-->>Client: 204 No Content
+
+    Note over API,App: Actualizar stock (PATCH /{id}/stock)
+    Client->>API: PATCH /commands/products/{id}/stock { UpdateStockCommand }
+    API->>App: UpdateStockUseCase.execute(UpdateStockCommand)
+    App->>Infra: ProductRepository.findById(id)
+    Infra-->>App: ProductAggregate
+    App->>Domain: ProductAggregate.adjustStock(quantity, reason)
+    Domain->>Infra: ProductRepository.save(ProductAggregate)
+    App-->>API: void
+    API-->>Client: 204 No Content
+
+    Note over API,App: Desactivar producto (PATCH /{id}/deactivate)
+    Client->>API: PATCH /commands/products/{id}/deactivate
+    API->>App: DeactivateProductUseCase.execute(DeactivateProductCommand)
+    App->>Infra: ProductRepository.findById(id)
+    Infra-->>App: ProductAggregate
+    App->>Domain: ProductAggregate.deactivate()
+    Domain->>Infra: ProductRepository.save(ProductAggregate)
+    App-->>API: void
+    API-->>Client: 204 No Content
+```

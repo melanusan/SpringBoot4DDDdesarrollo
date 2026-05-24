@@ -1,0 +1,60 @@
+# Diagrama detallado — CommandOrderControllerV1
+
+Incluye: textos del flujo original, nombres de variables usados en el código, y clases base de las entidades/agregados.
+
+Variables relevantes en `CommandOrderControllerV1`:
+
+- `createOrderCommand` : `CreateOrderCommand` (request body parameter)
+- `productId` : `String` (returned id variable in controller; actually represents the created resource id)
+- `id` : `String` (path variable for PATCH endpoints)
+- `reason` : `String` (request param in cancel)
+- `status` : `String` (request param in status update)
+
+Clases base y estructuras importantes:
+
+- `CreateOrderCommand` : `record` (contains nested `OrderItemRequest` record)
+- `OrderRoot` : extends `AggregateRoot<OrderId>` -> `Entity<OrderId>`
+- `OrderItem` : extends `Entity<OrderItemId>`
+- Repository port: `OrderRepository` / `OrderCatalogRepositoryPort` (infra interface)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client as Cliente
+    participant API as "erp-api\nCommandOrderControllerV1\n(vars: createOrderCommand:CreateOrderCommand, productId:String, id:String, reason:String, status:String)"
+    participant App as "erp-application\nCreateOrderUseCase.execute(CreateOrderCommand)\nUpdateOrderStatusUseCase.execute(UpdateOrderStatusCommand)\nCancelOrderUseCase.execute(CancelOrderCommand)"
+    participant Domain as "erp-domain\nOrderRoot (Order aggregate)\nextends AggregateRoot<OrderId> -> Entity<OrderId]\nOrderItem extends Entity<OrderItemId]"
+    participant Infra as "erp-infrastructure\nOrderRepository (implements ProductCatalogRepositoryPort / OrderCatalogRepositoryPort)"
+    participant Common as "erp-common\nCommands: CreateOrderCommand(OrderItemRequest)/CancelOrderCommand/UpdateOrderStatusCommand"
+
+    Note over API,App: Crear orden (POST)
+    Client->>API: POST /commands/orders { createOrderCommand: CreateOrderCommand }
+    API->>Common: validar/mapear -> createOrderCommand (CreateOrderCommand with items: List<OrderItemRequest>)
+    API->>App: CreateOrderUseCase.execute(createOrderCommand)
+    App->>Domain: OrderRoot.create(orderNumber, customer, items -> List<OrderItem>)
+    Domain->>Infra: OrderRepository.save(orderRoot)  
+    Infra-->>Domain: persisted Order id (OrderId / String)
+    Domain-->>App: orderRoot (with id)
+    App-->>API: returns productId (String)
+    API-->>Client: 201 Created Location: /commands/orders/{productId}
+
+    Note over API,App: Cancelar orden (PATCH /{id}/cancel)
+    Client->>API: PATCH /commands/orders/{id}/cancel?reason={reason}
+    API->>App: CancelOrderUseCase.execute(new CancelOrderCommand(id, reason))
+    App->>Infra: OrderRepository.findById(id)
+    Infra-->>App: orderRoot
+    App->>Domain: orderRoot.cancel(reason)
+    Domain->>Infra: OrderRepository.save(orderRoot)
+    App-->>API: void
+    API-->>Client: 204 No Content
+
+    Note over API,App: Actualizar estado (PATCH /{id}/status)
+    Client->>API: PATCH /commands/orders/{id}/status?status={status}
+    API->>App: UpdateOrderStatusUseCase.execute(new UpdateOrderStatusCommand(id, status))
+    App->>Infra: OrderRepository.findById(id)
+    Infra-->>App: orderRoot
+    App->>Domain: orderRoot.<transition> (confirm/ship/deliver based on status)
+    Domain->>Infra: OrderRepository.save(orderRoot)
+    App-->>API: void
+    API-->>Client: 204 No Content
+```
