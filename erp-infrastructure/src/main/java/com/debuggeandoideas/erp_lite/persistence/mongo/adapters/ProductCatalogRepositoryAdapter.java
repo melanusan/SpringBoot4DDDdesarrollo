@@ -1,3 +1,9 @@
+/*
+ * ProductCatalogRepositoryAdapter
+ *
+ * English: Adapter for product-catalog operations in MongoDB.
+ * Español: Adaptador para operaciones producto-catálogo en MongoDB.
+ */
 package com.debuggeandoideas.erp_lite.persistence.mongo.adapters;
 
 import com.debuggeandoideas.erp_lite.domain.ports.repositories.ProductCatalogRepositoryPort;

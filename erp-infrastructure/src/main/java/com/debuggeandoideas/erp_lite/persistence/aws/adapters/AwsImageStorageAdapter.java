@@ -1,3 +1,9 @@
+/*
+ * AwsImageStorageAdapter
+ *
+ * English: Adapter implementing ImageStorageServicePort using AWS S3.
+ * Español: Adaptador que implementa ImageStorageServicePort usando AWS S3.
+ */
 package com.debuggeandoideas.erp_lite.persistence.aws.adapters;
 
 import com.debuggeandoideas.erp_lite.domain.exceptions.MyBusinessException;

@@ -1,3 +1,9 @@
+/*
+ * ProductJpaMapper
+ *
+ * English: Mapper between domain ProductRoot and JPA ProductEntity.
+ * Español: Mapeador entre ProductRoot del dominio y ProductEntity de JPA.
+ */
 package com.debuggeandoideas.erp_lite.persistence.jpa.mappers;
 
 import com.debuggeandoideas.erp_lite.domain.entities.product.CategoryReference;

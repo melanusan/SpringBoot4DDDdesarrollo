@@ -1,3 +1,9 @@
+/*
+ * ProductInCatalogDocument
+ *
+ * English: Document representing a product entry inside a catalog collection.
+ * Español: Documento que representa una entrada de producto dentro de la colección de catálogo.
+ */
 package com.debuggeandoideas.erp_lite.persistence.mongo.documents;
 
 import jakarta.persistence.Id;

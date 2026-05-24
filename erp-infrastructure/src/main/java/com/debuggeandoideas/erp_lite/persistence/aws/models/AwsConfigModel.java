@@ -1,3 +1,9 @@
+/*
+ * AwsConfigModel
+ *
+ * English: Configuration model for AWS services (S3, etc.).
+ * Español: Modelo de configuración para servicios AWS (S3, etc.).
+ */
 package com.debuggeandoideas.erp_lite.persistence.aws.models;
 
 import jakarta.validation.constraints.NotBlank;

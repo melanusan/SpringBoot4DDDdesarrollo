@@ -1,3 +1,9 @@
+/*
+ * ProductInCatalogRepository
+ *
+ * English: Mongo repository for products stored in catalogs (denormalized document model).
+ * Español: Repositorio Mongo para productos almacenados en catálogos (modelo denormalizado).
+ */
 package com.debuggeandoideas.erp_lite.persistence.mongo.repositories;
 
 import com.debuggeandoideas.erp_lite.persistence.mongo.documents.ProductInCatalogDocument;

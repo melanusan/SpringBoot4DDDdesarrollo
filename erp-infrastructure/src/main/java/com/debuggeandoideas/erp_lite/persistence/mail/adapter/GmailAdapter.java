@@ -1,3 +1,9 @@
+/*
+ * GmailAdapter
+ *
+ * English: Adapter that implements mail sending via Gmail APIs.
+ * Español: Adaptador que implementa envío de correo usando APIs de Gmail.
+ */
 package com.debuggeandoideas.erp_lite.persistence.mail.adapter;
 
 import com.debuggeandoideas.erp_lite.domain.entities.order.OrderId;

@@ -1,3 +1,9 @@
+/*
+ * RabbitMQEventPublisherAdapter
+ *
+ * English: Adapter that publishes domain events to RabbitMQ.
+ * Español: Adaptador que publica eventos de dominio en RabbitMQ.
+ */
 package com.debuggeandoideas.erp_lite.persistence.rabbit.adapters;
 
 import com.debuggeandoideas.erp_lite.domain.common.DomainEvent;

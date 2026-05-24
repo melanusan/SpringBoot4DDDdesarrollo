@@ -1,3 +1,9 @@
+/*
+ * ProductCatalogMapper
+ *
+ * English: Maps ProductInCatalog documents to domain views.
+ * Español: Mapea documentos ProductInCatalog a vistas del dominio.
+ */
 package com.debuggeandoideas.erp_lite.persistence.mongo.mappers;
 
 import com.debuggeandoideas.erp_lite.domain.views.ProductView;

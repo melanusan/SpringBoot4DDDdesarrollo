@@ -1,3 +1,9 @@
+/*
+ * CatalogMapper
+ *
+ * English: Maps Catalog documents to domain views/objects.
+ * Español: Mapea documentos de catálogo a vistas/objetos del dominio.
+ */
 package com.debuggeandoideas.erp_lite.persistence.mongo.mappers;
 
 import com.debuggeandoideas.erp_lite.domain.views.CatalogView;

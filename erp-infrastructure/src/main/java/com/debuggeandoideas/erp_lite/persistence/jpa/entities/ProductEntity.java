@@ -1,3 +1,9 @@
+/*
+ * ProductEntity (JPA)
+ *
+ * English: JPA entity mapping for products. Used by the JPA adapter to persist ProductRoot data.
+ * Español: Entidad JPA para productos. Usada por el adaptador JPA para persistir datos de ProductRoot.
+ */
 package com.debuggeandoideas.erp_lite.persistence.jpa.entities;
 
 import jakarta.persistence.*;

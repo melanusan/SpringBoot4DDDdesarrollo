@@ -1,3 +1,9 @@
+/*
+ * Email (Value Object)
+ *
+ * English: Email value object with simple validation.
+ * Español: Objeto de valor Email con validación sencilla.
+ */
 package com.debuggeandoideas.erp_lite.domain.shared;
 
 import java.util.regex.Pattern;

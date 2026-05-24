@@ -1,3 +1,9 @@
+/*
+ * AuditLogDocument
+ *
+ * English: Mongo document used to store audit logs for actions performed in the system.
+ * Español: Documento Mongo usado para almacenar logs de auditoría de acciones en el sistema.
+ */
 package com.debuggeandoideas.erp_lite.persistence.mongo.documents;
 
 import lombok.AllArgsConstructor;

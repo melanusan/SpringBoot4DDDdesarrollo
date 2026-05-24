@@ -1,3 +1,9 @@
+/*
+ * Quantity (Value Object)
+ *
+ * English: Value object representing a quantity with domain validation.
+ * Español: Objeto de valor que representa una cantidad con validación de dominio.
+ */
 package com.debuggeandoideas.erp_lite.domain.shared;
 
 /**

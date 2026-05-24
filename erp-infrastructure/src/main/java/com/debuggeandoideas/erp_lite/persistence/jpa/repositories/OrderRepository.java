@@ -1,3 +1,9 @@
+/*
+ * OrderRepository (Spring Data JPA)
+ *
+ * English: JPA repository for orders.
+ * Español: Repositorio JPA para órdenes.
+ */
 package com.debuggeandoideas.erp_lite.persistence.jpa.repositories;
 
 import com.debuggeandoideas.erp_lite.persistence.jpa.entities.OrderEntity;

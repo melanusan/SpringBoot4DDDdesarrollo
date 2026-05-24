@@ -1,3 +1,9 @@
+/*
+ * OrderJpaMapper
+ *
+ * English: Mapper between domain OrderRoot and JPA OrderEntity.
+ * Español: Mapeador entre OrderRoot del dominio y OrderEntity de JPA.
+ */
 package com.debuggeandoideas.erp_lite.persistence.jpa.mappers;
 
 import com.debuggeandoideas.erp_lite.domain.entities.order.Customer;

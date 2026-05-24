@@ -1,3 +1,9 @@
+/*
+ * Money (Value Object)
+ *
+ * English: Monetary value object encapsulating currency and amount.
+ * Español: Objeto de valor monetario que encapsula moneda y monto.
+ */
 package com.debuggeandoideas.erp_lite.domain.shared;
 
 import java.math.BigDecimal;

@@ -5,11 +5,21 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Base class for all Aggregate Roots.
- * Aggregate Roots are entities that serve as the entry point to an aggregate.
- * They are responsible for maintaining the consistency of the aggregate and publishing domain events.
+ * Base class for all Aggregate Roots. / Clase base para las raíces de agregado.
  *
- * @param <ID> the type of the aggregate root identifier
+ * Concepts:
+ * - Aggregate Root: the entry point for a consistency boundary in DDD.
+ * - It holds and manages domain events that describe state changes inside the aggregate.
+ *
+ * English: Aggregate Roots are entities that serve as the entry point to an aggregate.
+ * Español: Las Aggregate Roots son entidades que sirven como punto de entrada al agregado.
+ *
+ * Note: infrastructure should read events via {@link #getDomainEvents()} and call {@link #clearDomainEvents()}
+ * after successful persistence and publication.
+ *
+ * Reference: https://martinfowler.com/bliki/DomainEvent.html and https://dddcommunity.org/
+ *
+ * @param <ID> the type of the aggregate root identifier / tipo del identificador
  */
 public abstract class AggregateRoot<ID> extends Entity<ID> {
 

@@ -1,3 +1,9 @@
+/*
+ * ProductCreatedMessage
+ *
+ * English: DTO used for messaging (RabbitMQ) when a product is created.
+ * Español: DTO usado en mensajería (RabbitMQ) cuando se crea un producto.
+ */
 package com.debuggeandoideas.erp_lite.persistence.rabbit.dtos;
 
 import java.math.BigDecimal;

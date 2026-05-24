@@ -1,3 +1,9 @@
+/*
+ * RedisConfig
+ *
+ * English: Redis configuration for caching. Keep sensitive values out of source.
+ * Español: Configuración de Redis para caching. Mantener valores sensibles fuera del código.
+ */
 package com.debuggeandoideas.erp_lite.persistence.redis;
 
 import org.springframework.cache.annotation.EnableCaching;

@@ -1,3 +1,9 @@
+/*
+ * OrderRepositoryAdapter
+ *
+ * English: JPA adapter that implements the domain OrderRepositoryPort.
+ * Español: Adaptador JPA que implementa el puerto de repositorio de órdenes del dominio.
+ */
 package com.debuggeandoideas.erp_lite.persistence.jpa.adapters;
 
 import com.debuggeandoideas.erp_lite.domain.entities.order.OrderId;

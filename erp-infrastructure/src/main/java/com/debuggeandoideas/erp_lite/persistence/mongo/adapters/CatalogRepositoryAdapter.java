@@ -1,3 +1,9 @@
+/*
+ * CatalogRepositoryAdapter
+ *
+ * English: Mongo adapter implementing CatalogRepositoryPort for reading catalog views.
+ * Español: Adaptador Mongo que implementa CatalogRepositoryPort para lectura de vistas de catálogo.
+ */
 package com.debuggeandoideas.erp_lite.persistence.mongo.adapters;
 
 import com.debuggeandoideas.erp_lite.domain.ports.repositories.CatalogRepositoryPort;

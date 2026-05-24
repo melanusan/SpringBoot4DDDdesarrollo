@@ -1,3 +1,11 @@
+/*
+ * JsonPlaceholderCustomerProviderAdapter
+ *
+ * English: Adapter implementing the CustomerProviderService port using a remote REST provider.
+ * Español: Adaptador que implementa el puerto CustomerProviderService usando un proveedor REST remoto.
+ *
+ * Pattern: Adapter implements domain port and translates between domain models and external DTOs.
+ */
 package com.debuggeandoideas.erp_lite.persistence.rest.adapters;
 
 import com.debuggeandoideas.erp_lite.domain.entities.customer.CustomerInfo;

@@ -1,3 +1,9 @@
+/*
+ * CacheConstants
+ *
+ * English: Constants used for cache keys and TTL values.
+ * Español: Constantes usadas para keys de cache y valores TTL.
+ */
 package com.debuggeandoideas.erp_lite.constants;
 
 import lombok.AccessLevel;

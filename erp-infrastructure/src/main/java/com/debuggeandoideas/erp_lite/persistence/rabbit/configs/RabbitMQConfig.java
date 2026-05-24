@@ -1,3 +1,9 @@
+/*
+ * RabbitMQConfig
+ *
+ * English: Configuration for RabbitMQ connections and queues.
+ * Español: Configuración para conexiones y colas RabbitMQ.
+ */
 package com.debuggeandoideas.erp_lite.persistence.rabbit.configs;
 
 import org.springframework.amqp.core.Binding;

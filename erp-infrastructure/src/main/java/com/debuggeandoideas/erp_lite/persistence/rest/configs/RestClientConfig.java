@@ -1,3 +1,9 @@
+/*
+ * RestClientConfig
+ *
+ * English: Configuration for REST clients (e.g., timeouts, base URLs).
+ * Español: Configuración para clientes REST (timeouts, URL base).
+ */
 package com.debuggeandoideas.erp_lite.persistence.rest.configs;
 
 import com.debuggeandoideas.erp_lite.persistence.rest.models.JsonplaceholderConfigModel;

@@ -1,3 +1,9 @@
+/*
+ * OrderProductEntity
+ *
+ * English: JPA entity for the join relation between orders and products.
+ * Español: Entidad JPA para la relación entre órdenes y productos.
+ */
 package com.debuggeandoideas.erp_lite.persistence.jpa.entities;
 
 import jakarta.persistence.*;

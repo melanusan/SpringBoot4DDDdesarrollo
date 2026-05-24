@@ -1,3 +1,9 @@
+/*
+ * CatalogType
+ *
+ * English: Enum representing different catalog types (e.g., DEFAULT, PROMOTION).
+ * Español: Enum que representa diferentes tipos de catálogos (por ejemplo, DEFAULT, PROMOTION).
+ */
 package com.debuggeandoideas.erp_lite.enums;
 
 public enum CatalogType {

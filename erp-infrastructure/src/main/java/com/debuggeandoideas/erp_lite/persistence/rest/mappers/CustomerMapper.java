@@ -1,3 +1,11 @@
+/*
+ * CustomerMapper
+ *
+ * English: Maps external REST DTOs to domain objects and vice versa.
+ * Español: Mapea DTOs REST externos a objetos del dominio y viceversa.
+ *
+ * Keep mapping logic simple and deterministic. Prefer pure functions.
+ */
 package com.debuggeandoideas.erp_lite.persistence.rest.mappers;
 
 import com.debuggeandoideas.erp_lite.domain.entities.customer.CustomerInfo;

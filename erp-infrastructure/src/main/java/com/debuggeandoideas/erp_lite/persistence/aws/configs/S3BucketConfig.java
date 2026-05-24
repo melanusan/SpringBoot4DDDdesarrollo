@@ -1,3 +1,9 @@
+/*
+ * S3BucketConfig
+ *
+ * English: Configuration for S3 buckets used by the image storage adapter.
+ * Español: Configuración de buckets S3 usados por el adaptador de almacenamiento de imágenes.
+ */
 package com.debuggeandoideas.erp_lite.persistence.aws.configs;
 
 import com.debuggeandoideas.erp_lite.persistence.aws.models.AwsConfigModel;

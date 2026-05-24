@@ -1,3 +1,9 @@
+/*
+ * OrderEntity (JPA)
+ *
+ * English: JPA representation of an Order aggregate for persistence.
+ * Español: Representación JPA de un agregado Order para persistencia.
+ */
 package com.debuggeandoideas.erp_lite.persistence.jpa.entities;
 
 import jakarta.persistence.*;

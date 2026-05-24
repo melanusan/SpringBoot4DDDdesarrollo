@@ -1,3 +1,11 @@
+/*
+ * JsonplaceholderConfigModel
+ *
+ * English: Configuration model for the JsonPlaceholder external REST provider.
+ * Español: Modelo de configuración para el proveedor REST externo JsonPlaceholder.
+ *
+ * Reference: https://en.wikipedia.org/wiki/Representational_state_transfer (REST)
+ */
 package com.debuggeandoideas.erp_lite.persistence.rest.models;
 
 import jakarta.validation.constraints.NotBlank;

@@ -1,3 +1,9 @@
+/*
+ * ProductRepositoryAdapter
+ *
+ * English: JPA adapter that implements ProductRepositoryPort to persist ProductRoot.
+ * Español: Adaptador JPA que implementa ProductRepositoryPort para persistir ProductRoot.
+ */
 package com.debuggeandoideas.erp_lite.persistence.jpa.adapters;
 
 import com.debuggeandoideas.erp_lite.domain.entities.product.ProductId;

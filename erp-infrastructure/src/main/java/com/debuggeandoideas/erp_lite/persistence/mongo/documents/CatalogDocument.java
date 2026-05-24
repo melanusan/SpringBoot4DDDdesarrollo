@@ -1,3 +1,9 @@
+/*
+ * CatalogDocument
+ *
+ * English: Document model for a catalog stored in MongoDB.
+ * Español: Modelo de documento para un catálogo almacenado en MongoDB.
+ */
 package com.debuggeandoideas.erp_lite.persistence.mongo.documents;
 
 import com.debuggeandoideas.erp_lite.enums.CatalogType;
