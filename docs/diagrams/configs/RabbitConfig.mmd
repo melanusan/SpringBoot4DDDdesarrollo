@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant App as "Application<br/>startup"
+    participant Spring as "Spring Boot<br/>Environment"
+    participant Props as "application.yml<br/>spring.rabbitmq"
+    participant Config as "erp-infrastructure<br/>RabbitMQConfig"
+    participant Infra as "Rabbit broker<br/>(external)"
+    participant Beans as "Queue / Exchange / RabbitTemplate<br/>(beans)"
+
+    App->>Spring: start
+    Spring->>Props: read rabbitmq properties
+    Spring->>Config: instantiate RabbitMQConfig bean
+    Config->>Beans: create Queue, Exchange, Binding, RabbitTemplate
+    Beans->>Infra: publish/consume messages

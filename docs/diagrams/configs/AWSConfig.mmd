@@ -1,0 +1,15 @@
+sequenceDiagram
+    participant App as "Application<br/>startup"
+    participant Spring as "Spring Boot<br/>Environment"
+    participant Props as "classpath:aws/aws.yml<br/>(loaded by YmlConfig)"
+    participant Model as "erp-infrastructure<br/>AwsConfigModel(record)"
+    participant Config as "erp-infrastructure<br/>S3BucketConfig"
+    participant AWS as "AWS S3 Client<br/>S3Client(bean)"
+
+    App->>Spring: start
+    Spring->>Props: load aws/aws.yml
+    Spring->>Model: bind properties -> AwsConfigModel
+    Spring->>Config: instantiate S3BucketConfig bean
+    Config->>Model: inject AwsConfigModel
+    Config->>AWS: build S3Client(endpoint,region,credentials)
+    Note right of AWS: S3Client bean available to adapters

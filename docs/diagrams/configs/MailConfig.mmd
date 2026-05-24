@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant App as "Application<br/>startup"
+    participant Spring as "Spring Boot<br/>Environment"
+    participant Props as "application.yml<br/>spring.mail.*"
+    participant AutoCfg as "Spring Boot Mail autoconfig"
+    participant Mail as "JavaMailSenderImpl<br/>(bean)"
+
+    App->>Spring: start
+    Spring->>Props: read mail properties
+    Spring->>AutoCfg: configure JavaMailSender
+    AutoCfg->>Mail: JavaMailSenderImpl configured (host,port,user,pass)
+    Note right of Mail: available for email sending

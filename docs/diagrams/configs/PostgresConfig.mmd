@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant App as "Application<br/>startup"
+    participant Spring as "Spring Boot<br/>Environment"
+    participant Props as "application.yml<br/>spring.datasource / jpa"
+    participant AutoCfg as "Spring Boot<br/>DataSource autoconfig"
+    participant Hikari as "HikariDataSource(bean)"
+    participant JPA as "Spring Data JPA / Hibernate"
+
+    App->>Spring: start
+    Spring->>Props: read datasource & jpa properties
+    Spring->>AutoCfg: bind & create DataSource
+    AutoCfg->>Hikari: create HikariDataSource
+    Hikari->>JPA: used by EntityManager / Repositories
+    Note right of JPA: Schema validation / dialect: PostgreSQL

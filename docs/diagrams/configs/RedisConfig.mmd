@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant App as "Application<br/>startup"
+    participant Spring as "Spring Boot<br/>Environment"
+    participant Props as "application.yml<br/>spring.data.redis / cache settings"
+    participant Config as "erp-infrastructure<br/>RedisConfig"
+    participant Bean as "RedisTemplate / RedisCacheManager<br/>(beans)"
+
+    App->>Spring: start
+    Spring->>Props: read redis properties
+    Spring->>Config: instantiate RedisConfig bean
+    Config->>Bean: create RedisTemplate and RedisCacheManager
+    Note right of Bean: beans available for caching and templates

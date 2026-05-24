@@ -1,0 +1,15 @@
+sequenceDiagram
+    participant App as "Application<br/>startup"
+    participant Spring as "Spring Boot<br/>Environment"
+    participant AppYml as "application.yml<br/>(erp-api/src/main/resources)"
+    participant YmlCfg as "erp-api<br/>YmlConfig"
+    participant AwsModel as "erp-infrastructure<br/>AwsConfigModel"
+    participant JsonModel as "erp-infrastructure<br/>JsonplaceholderConfigModel"
+
+    App->>Spring: start
+    Spring->>AppYml: load application.yml
+    Spring->>YmlCfg: instantiate YmlConfig
+    YmlCfg->>Props: load classpath:aws/aws.yml and jsonplaceholder.yml
+    Props->>AwsModel: bind aws.s3 -> AwsConfigModel
+    Props->>JsonModel: bind jsonplaceholder -> JsonplaceholderConfigModel
+    Note right of YmlCfg: centralizes extra YAML property sources

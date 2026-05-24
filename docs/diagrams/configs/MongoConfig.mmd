@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant App as "Application<br/>startup"
+    participant Spring as "Spring Boot<br/>Environment"
+    participant Props as "application.yml<br/>spring.data.mongodb.uri"
+    participant AutoCfg as "Spring Boot<br/>Mongo autoconfig"
+    participant Mongo as "MongoClient / MongoTemplate<br/>(beans)"
+
+    App->>Spring: start
+    Spring->>Props: read mongodb uri
+    Spring->>AutoCfg: create MongoClient bean
+    AutoCfg->>Mongo: provide MongoTemplate / repositories
+    Note right of Mongo: Catalog repositories use MongoDB
