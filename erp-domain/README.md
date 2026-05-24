@@ -37,6 +37,7 @@ classDiagram
 ```
 
 References:
-- Domain-Driven Design community: https://dddcommunity.org/
-- Hexagonal Architecture (Ports & Adapters): https://alistair.cockburn.us/hexagonal-architecture/
-- Domain Events (martinfowler): https://martinfowler.com/articles/201701-event-driven.html
+
+- Domain-Driven Design community: <https://dddcommunity.org/>
+- Hexagonal Architecture (Ports & Adapters): <https://alistair.cockburn.us/hexagonal-architecture/>
+- Domain Events (martinfowler): <https://martinfowler.com/articles/201701-event-driven.html>

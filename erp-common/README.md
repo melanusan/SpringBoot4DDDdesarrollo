@@ -9,4 +9,5 @@ Spanish
 Constantes compartidas, enums y utilidades simples usadas en todos los módulos. Mantén este módulo mínimo y sin lógica de dominio.
 
 References:
+
 - Keep cross-cutting utilities here; avoid importing application or infrastructure types to preserve modularity.

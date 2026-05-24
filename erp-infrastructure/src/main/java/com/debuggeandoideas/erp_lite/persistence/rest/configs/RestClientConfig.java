@@ -25,26 +25,20 @@ public class RestClientConfig {
     private final JsonplaceholderConfigModel jsonConfig;
 
     @Bean(name = "jsonplaceholder")
-    @ConditionalOnProperty(
-            prefix = "jsonplaceholder",
-            name = "enabled",
-            havingValue = "true",
-            matchIfMissing = true
-    )
+    @ConditionalOnProperty(prefix = "jsonplaceholder", name = "enabled", havingValue = "true", matchIfMissing = true)
     public RestClient restClient() {
         return RestClient.builder()
                 .baseUrl(jsonConfig.baseUrl())
-               .requestInterceptors(interceptors -> {
-                   interceptors.add(loggingInterceptor());
-                   interceptors.add(errorLoggingInterceptor());
-               })
+                .requestInterceptors(interceptors -> {
+                    interceptors.add(loggingInterceptor());
+                    interceptors.add(errorLoggingInterceptor());
+                })
                 .defaultHeaders(headers -> {
                     headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
                     headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
                 })
                 .build();
     }
-
 
     private ClientHttpRequestInterceptor loggingInterceptor() {
         return (req, body, exe) -> {

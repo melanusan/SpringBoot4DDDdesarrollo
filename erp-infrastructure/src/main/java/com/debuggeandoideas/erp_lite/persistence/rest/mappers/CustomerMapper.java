@@ -19,10 +19,7 @@ import org.mapstruct.ReportingPolicy;
 /**
  * Anti-Corruption Layer between external API (JSONPlaceholder) and domain
  */
-@Mapper(
-        componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.ERROR
-)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface CustomerMapper {
 
     @Mapping(source = "id", target = "id")

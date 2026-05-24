@@ -65,7 +65,8 @@ public record Money(BigDecimal amount, Currency currency) {
      */
     public Money add(Money other) {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Cannot add money with different currencies: " + this.currency + " and " + other.currency);
+            throw new IllegalArgumentException(
+                    "Cannot add money with different currencies: " + this.currency + " and " + other.currency);
         }
         return new Money(this.amount.add(other.amount), this.currency);
     }
@@ -76,11 +77,13 @@ public record Money(BigDecimal amount, Currency currency) {
      *
      * @param other the Money to subtract
      * @return a new Money instance with the difference
-     * @throws IllegalArgumentException if currencies don't match or result is negative
+     * @throws IllegalArgumentException if currencies don't match or result is
+     *                                  negative
      */
     public Money subtract(Money other) {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Cannot subtract money with different currencies: " + this.currency + " and " + other.currency);
+            throw new IllegalArgumentException(
+                    "Cannot subtract money with different currencies: " + this.currency + " and " + other.currency);
         }
         BigDecimal result = this.amount.subtract(other.amount);
         if (result.compareTo(BigDecimal.ZERO) < 0) {

@@ -20,5 +20,6 @@ flowchart LR
 ```
 
 References:
-- Clean Architecture overview: https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html
-- Commands and Queries (CQRS): https://martinfowler.com/bliki/CQRS.html
+
+- Clean Architecture overview: <https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html>
+- Commands and Queries (CQRS): <https://martinfowler.com/bliki/CQRS.html>

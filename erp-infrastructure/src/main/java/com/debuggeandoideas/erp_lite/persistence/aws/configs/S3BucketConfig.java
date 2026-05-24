@@ -22,25 +22,24 @@ import java.net.URI;
 @Slf4j
 public class S3BucketConfig {
 
-    @Bean
-    public S3Client s3Client(AwsConfigModel awsConfig) {
-        log.info("Configuring AWS S3 bucket");
+        @Bean
+        public S3Client s3Client(AwsConfigModel awsConfig) {
+                log.info("Configuring AWS S3 bucket");
 
-        var credentials = AwsBasicCredentials.create(
-                awsConfig.accessKey(),
-                awsConfig.secretKey()
-        );
+                var credentials = AwsBasicCredentials.create(
+                                awsConfig.accessKey(),
+                                awsConfig.secretKey());
 
-        var s3Config = S3Configuration.builder()
-                .pathStyleAccessEnabled(awsConfig.pathStyleEnabled())
-                .build();
+                var s3Config = S3Configuration.builder()
+                                .pathStyleAccessEnabled(awsConfig.pathStyleEnabled())
+                                .build();
 
-        var s3ClientBuilder = S3Client.builder()
-                .endpointOverride(URI.create(awsConfig.endpoint()))
-                .region(Region.of(awsConfig.region()))
-                .credentialsProvider(StaticCredentialsProvider.create(credentials))
-                .serviceConfiguration(s3Config);
+                var s3ClientBuilder = S3Client.builder()
+                                .endpointOverride(URI.create(awsConfig.endpoint()))
+                                .region(Region.of(awsConfig.region()))
+                                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                                .serviceConfiguration(s3Config);
 
-        return s3ClientBuilder.build();
-    }
+                return s3ClientBuilder.build();
+        }
 }

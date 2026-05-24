@@ -39,7 +39,7 @@ public class ProductCatalogRepositoryAdapter implements ProductCatalogRepository
 
         if (raw != null) {
             log.debug("Found product with id in cache {}", id);
-           return Optional.of(this.objectMapper.convertValue(raw, ProductView.class));
+            return Optional.of(this.objectMapper.convertValue(raw, ProductView.class));
         }
 
         log.debug("Finding product with id in mongo {}", id);

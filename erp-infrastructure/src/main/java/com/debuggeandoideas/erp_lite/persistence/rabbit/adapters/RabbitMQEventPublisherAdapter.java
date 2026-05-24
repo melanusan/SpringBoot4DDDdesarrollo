@@ -53,8 +53,7 @@ public class RabbitMQEventPublisherAdapter implements EventPublisherPort {
                 event.description(),
                 event.stock().value(),
                 event.category().categoryId(),
-                event.image() !=null ? event.image().imageUrl() : null,
-                event.active()
-        );
+                event.image() != null ? event.image().imageUrl() : null,
+                event.active());
     }
 }

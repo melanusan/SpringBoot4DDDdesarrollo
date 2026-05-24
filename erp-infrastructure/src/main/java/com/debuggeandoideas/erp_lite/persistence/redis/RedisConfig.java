@@ -36,12 +36,11 @@ public class RedisConfig {
                 .builder()
                 .build();
 
-        RedisCacheConfiguration configuration =
-                RedisCacheConfiguration.defaultCacheConfig()
-                        .entryTtl(REDIS_CACHE_TTL)
-                        .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
-
+        RedisCacheConfiguration configuration = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(REDIS_CACHE_TTL)
+                .serializeKeysWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
 
         Map<String, RedisCacheConfiguration> configsMap = new HashMap<>();
 
@@ -66,13 +65,13 @@ public class RedisConfig {
                 .builder()
                 .build();
 
-    RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer()); // cache manger
         redisTemplate.setValueSerializer(serializer); // cache manger
         redisTemplate.setHashKeySerializer(new StringRedisSerializer()); // redis template
-        redisTemplate.setHashValueSerializer(serializer);  // redis template
+        redisTemplate.setHashValueSerializer(serializer); // redis template
 
         return redisTemplate;
     }

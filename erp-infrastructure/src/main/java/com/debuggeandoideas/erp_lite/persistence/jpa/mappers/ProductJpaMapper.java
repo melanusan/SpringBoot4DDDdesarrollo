@@ -28,12 +28,10 @@ import java.util.Currency;
 
 /**
  * Anti-Corruption Layer between ProductRoot (Domain) and ProductEntity (JPA).
- * Handles value object unwrapping/wrapping and Instant ←→ LocalDateTime conversion.
+ * Handles value object unwrapping/wrapping and Instant ←→ LocalDateTime
+ * conversion.
  */
-@Mapper(
-        componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.ERROR
-)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface ProductJpaMapper {
 
     // ── Domain → Entity ─────────────────────────────────────────────────
@@ -66,8 +64,7 @@ public interface ProductJpaMapper {
             var constructor = ProductRoot.class.getDeclaredConstructor(
                     ProductId.class, SKU.class, ProductName.class, String.class,
                     Money.class, Stock.class, CategoryReference.class, ProductImage.class,
-                    boolean.class, AuditInfo.class
-            );
+                    boolean.class, AuditInfo.class);
             constructor.setAccessible(true);
 
             return constructor.newInstance(
@@ -83,9 +80,7 @@ public interface ProductJpaMapper {
                     new AuditInfo(
                             "system",
                             entity.getCreatedAt().toInstant(ZoneOffset.UTC),
-                            entity.getUpdatedAt().toInstant(ZoneOffset.UTC)
-                    )
-            );
+                            entity.getUpdatedAt().toInstant(ZoneOffset.UTC)));
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("Failed to reconstitute ProductRoot from ProductEntity", e);
         }

@@ -30,16 +30,16 @@ public class CatalogRepositoryAdapter implements CatalogRepositoryPort {
 
     private final CatalogRepository catalogRepository;
     private final CatalogMapper catalogMapper;
-    private final RedisTemplate<String, Object> redisTemplate; //NUEVA LINEA
-    private final ObjectMapper objectMapper; //NUEVA LINEA
+    private final RedisTemplate<String, Object> redisTemplate; // NUEVA LINEA
+    private final ObjectMapper objectMapper; // NUEVA LINEA
 
     @Override
     public Optional<CatalogView> findByType(CatalogType type) {
         log.info("Find catalog by type: {}", type);
 
-        Object raw = redisTemplate.opsForValue().get(CACHE_CATALOGS_BY_TYPE + type.name()); //NUEVA LINEA
+        Object raw = redisTemplate.opsForValue().get(CACHE_CATALOGS_BY_TYPE + type.name()); // NUEVA LINEA
         if (raw != null) {
-            CatalogView cached = objectMapper.convertValue(raw, CatalogView.class); //NUEVA LINEA
+            CatalogView cached = objectMapper.convertValue(raw, CatalogView.class); // NUEVA LINEA
             log.info("Found catalog in cache: {}", cached);
             return Optional.of(cached);
         }
@@ -52,10 +52,10 @@ public class CatalogRepositoryAdapter implements CatalogRepositoryPort {
     public List<ItemsView> findItemsByType(CatalogType type) {
         log.info("Find items catalog by type: {}", type);
 
-        Object raw = this.redisTemplate.opsForValue().get(CACHE_CATALOGS_BY_TYPE + type.name()); //NUEVA LINEA
+        Object raw = this.redisTemplate.opsForValue().get(CACHE_CATALOGS_BY_TYPE + type.name()); // NUEVA LINEA
 
         if (raw != null) {
-            CatalogView cached = objectMapper.convertValue(raw, CatalogView.class); //NUEVA LINEA
+            CatalogView cached = objectMapper.convertValue(raw, CatalogView.class); // NUEVA LINEA
 
             log.info("Found catalog items in cache, total: {}", cached.items().size());
             return cached.items();

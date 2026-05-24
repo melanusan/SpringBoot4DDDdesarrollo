@@ -14,23 +14,17 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public record AwsConfigModel(
 
-        @NotBlank(message = "AWS S3 endpoint must not be blank")
-        String endpoint,
+        @NotBlank(message = "AWS S3 endpoint must not be blank") String endpoint,
 
-        @NotBlank(message = "AWS region must not be blank")
-        String region,
+        @NotBlank(message = "AWS region must not be blank") String region,
 
-        @NotBlank(message = "AWS access key must not be blank")
-        String accessKey,
+        @NotBlank(message = "AWS access key must not be blank") String accessKey,
 
-        @NotBlank(message = "AWS secret key must not be blank")
-        String secretKey,
+        @NotBlank(message = "AWS secret key must not be blank") String secretKey,
 
-        @NotBlank(message = "AWS S3 bucket name must not be blank")
-        String bucketName,
+        @NotBlank(message = "AWS S3 bucket name must not be blank") String bucketName,
 
-        Boolean pathStyleEnabled
-) {
+        Boolean pathStyleEnabled) {
 
     public String getBucketUrl() {
         return String.format("%s/%s", endpoint, bucketName);

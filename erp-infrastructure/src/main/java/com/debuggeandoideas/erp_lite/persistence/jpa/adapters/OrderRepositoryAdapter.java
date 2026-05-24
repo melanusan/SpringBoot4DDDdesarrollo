@@ -128,7 +128,7 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
 
         } catch (Exception ex) {
             log.error("Failed to find orders by customer ID: {}", customerId.value(), ex);
-           return List.of();
+            return List.of();
         }
     }
 
@@ -154,8 +154,7 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
         List<OrderProductEntity> itemsEntity = entity.getItems();
         List<OrderItem> itemsDomain = root.getItems();
 
-        IntStream.range(0, itemsDomain.size()).forEach(i ->
-            itemsEntity.get(i).setId(itemsDomain.get(i).getId().value())
-        );
+        IntStream.range(0, itemsDomain.size())
+                .forEach(i -> itemsEntity.get(i).setId(itemsDomain.get(i).getId().value()));
     }
 }

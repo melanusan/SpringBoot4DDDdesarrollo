@@ -38,10 +38,7 @@ import java.util.List;
  * Anti-Corruption Layer between OrderRoot (Domain) and OrderEntity (JPA).
  * Also maps OrderItem ←→ OrderProductEntity.
  */
-@Mapper(
-        componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.ERROR
-)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface OrderJpaMapper {
 
     // ── Domain → Entity (Order) ─────────────────────────────────────────
@@ -98,8 +95,7 @@ public interface OrderJpaMapper {
 
             var constructor = OrderRoot.class.getDeclaredConstructor(
                     OrderId.class, OrderNumber.class, Customer.class, OrderStatus.class,
-                    List.class, Money.class, AuditInfo.class
-            );
+                    List.class, Money.class, AuditInfo.class);
             constructor.setAccessible(true);
 
             return constructor.newInstance(
@@ -107,20 +103,16 @@ public interface OrderJpaMapper {
                     OrderNumber.of(entity.getOrderNumber()),
                     Customer.of(
                             CustomerId.of(entity.getCustomerId()),
-                            entity.getCustomerName()
-                    ),
+                            entity.getCustomerName()),
                     OrderStatus.of(entity.getStatus()),
                     items,
                     Money.of(
                             entity.getTotalAmount(),
-                            Currency.getInstance(entity.getCurrency())
-                    ),
+                            Currency.getInstance(entity.getCurrency())),
                     new AuditInfo(
                             entity.getCreatedBy(),
                             entity.getCreatedAt().toInstant(ZoneOffset.UTC),
-                            entity.getUpdatedAt().toInstant(ZoneOffset.UTC)
-                    )
-            );
+                            entity.getUpdatedAt().toInstant(ZoneOffset.UTC)));
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("Failed to reconstitute OrderRoot from OrderEntity", e);
         }
@@ -140,8 +132,7 @@ public interface OrderJpaMapper {
         try {
             var constructor = OrderItem.class.getDeclaredConstructor(
                     OrderItemId.class, ProductId.class, String.class,
-                    Quantity.class, Money.class, Money.class
-            );
+                    Quantity.class, Money.class, Money.class);
             constructor.setAccessible(true);
 
             String currencyCode = entity.getOrder() != null && entity.getOrder().getCurrency() != null
@@ -155,8 +146,7 @@ public interface OrderJpaMapper {
                     entity.getProductName(),
                     Quantity.of(entity.getQuantity()),
                     Money.of(entity.getUnitPrice(), currency),
-                    Money.of(entity.getSubtotal(), currency)
-            );
+                    Money.of(entity.getSubtotal(), currency));
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("Failed to reconstitute OrderItem from OrderProductEntity", e);
         }
@@ -187,7 +177,8 @@ public interface OrderJpaMapper {
     }
 
     /**
-     * Creates a ProductEntity reference (proxy) from a domain ProductId for FK mapping.
+     * Creates a ProductEntity reference (proxy) from a domain ProductId for FK
+     * mapping.
      * Only the ID is set; JPA will use it for the foreign key relationship.
      */
     @Named("productIdToEntity")

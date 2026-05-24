@@ -25,5 +25,6 @@ sequenceDiagram
 ```
 
 References:
-- Designing Web APIs: https://restfulapi.net/
-- OpenAPI: https://swagger.io/specification/
+
+- Designing Web APIs: <https://restfulapi.net/>
+- OpenAPI: <https://swagger.io/specification/>

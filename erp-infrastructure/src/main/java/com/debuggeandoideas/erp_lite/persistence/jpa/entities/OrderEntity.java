@@ -16,15 +16,9 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-@Table(
-        name = "orders",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_orders_order_number",
-                        columnNames = "order_number"
-                )
-        }
-)
+@Table(name = "orders", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_orders_order_number", columnNames = "order_number")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -66,11 +60,7 @@ public class OrderEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(
-            mappedBy = "order",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<OrderProductEntity> items = new ArrayList<>();
 

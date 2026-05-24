@@ -9,17 +9,23 @@ import java.util.List;
  *
  * Concepts:
  * - Aggregate Root: the entry point for a consistency boundary in DDD.
- * - It holds and manages domain events that describe state changes inside the aggregate.
+ * - It holds and manages domain events that describe state changes inside the
+ * aggregate.
  *
- * English: Aggregate Roots are entities that serve as the entry point to an aggregate.
- * Español: Las Aggregate Roots son entidades que sirven como punto de entrada al agregado.
+ * English: Aggregate Roots are entities that serve as the entry point to an
+ * aggregate.
+ * Español: Las Aggregate Roots son entidades que sirven como punto de entrada
+ * al agregado.
  *
- * Note: infrastructure should read events via {@link #getDomainEvents()} and call {@link #clearDomainEvents()}
+ * Note: infrastructure should read events via {@link #getDomainEvents()} and
+ * call {@link #clearDomainEvents()}
  * after successful persistence and publication.
  *
- * Reference: https://martinfowler.com/bliki/DomainEvent.html and https://dddcommunity.org/
+ * Reference: https://martinfowler.com/bliki/DomainEvent.html and
+ * https://dddcommunity.org/
  *
- * @param <ID> the type of the aggregate root identifier / tipo del identificador
+ * @param <ID> the type of the aggregate root identifier / tipo del
+ *             identificador
  */
 public abstract class AggregateRoot<ID> extends Entity<ID> {
 
@@ -42,7 +48,8 @@ public abstract class AggregateRoot<ID> extends Entity<ID> {
 
     /**
      * Returns all domain events and clears the internal list.
-     * This method should be called by the infrastructure layer after persisting the aggregate.
+     * This method should be called by the infrastructure layer after persisting the
+     * aggregate.
      *
      * @return an unmodifiable list of domain events
      */
@@ -52,7 +59,8 @@ public abstract class AggregateRoot<ID> extends Entity<ID> {
 
     /**
      * Clears all domain events.
-     * This method should be called by the infrastructure layer after publishing events.
+     * This method should be called by the infrastructure layer after publishing
+     * events.
      */
     public void clearDomainEvents() {
         this.domainEvents.clear();

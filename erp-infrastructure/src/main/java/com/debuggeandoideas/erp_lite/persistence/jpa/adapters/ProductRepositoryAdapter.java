@@ -26,7 +26,6 @@ public class ProductRepositoryAdapter implements ProductRepositoryPort {
     private final ProductRepository productRepository;
     private final ProductJpaMapper productJpaMapper;
 
-
     @Override
     public ProductRoot save(ProductRoot product) {
         log.info("Saving product {}", product);

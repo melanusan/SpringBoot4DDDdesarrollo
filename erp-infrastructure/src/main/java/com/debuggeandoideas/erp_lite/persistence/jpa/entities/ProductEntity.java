@@ -14,15 +14,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(
-        name = "products",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_products_sku",
-                        columnNames = "sku"
-                )
-        }
-)
+@Table(name = "products", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_products_sku", columnNames = "sku")
+})
 @Getter
 @Setter
 @NoArgsConstructor

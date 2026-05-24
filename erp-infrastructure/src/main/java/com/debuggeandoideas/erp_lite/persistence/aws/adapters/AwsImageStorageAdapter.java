@@ -30,31 +30,31 @@ public class AwsImageStorageAdapter implements ImageStorageServicePort {
 
     @Override
     public ProductImage upload(String imageName, byte[] imageData) {
-       try {
-           final var key = "products/" + imageName;
+        try {
+            final var key = "products/" + imageName;
 
-           final var putObjRequest = PutObjectRequest
-                   .builder()
-                   .bucket(awsConfig.bucketName())
-                   .key(key)
-                   .contentType(this.determineContentType(imageName))
-                   .contentLength((long) imageData.length)
-                   .build();
+            final var putObjRequest = PutObjectRequest
+                    .builder()
+                    .bucket(awsConfig.bucketName())
+                    .key(key)
+                    .contentType(this.determineContentType(imageName))
+                    .contentLength((long) imageData.length)
+                    .build();
 
-           this.s3Client.putObject(putObjRequest, RequestBody.fromBytes(imageData));
+            this.s3Client.putObject(putObjRequest, RequestBody.fromBytes(imageData));
 
-           final var imgUrl = this.buildUrlImg(key);
-           log.info("Image uploaded successfully in {}.", imgUrl);
+            final var imgUrl = this.buildUrlImg(key);
+            log.info("Image uploaded successfully in {}.", imgUrl);
 
-           return new ProductImage(imgUrl);
+            return new ProductImage(imgUrl);
 
-       } catch (S3Exception s3e) {
-           log.error("Error uploading image", s3e);
-           throw new MyBusinessException("Error uploading image" + s3e.getMessage());
-       } catch (Exception e) {
-           log.error("Unexpected uploading deleting image", e);
-           throw new MyBusinessException("Error uploading image" + e.getMessage());
-       }
+        } catch (S3Exception s3e) {
+            log.error("Error uploading image", s3e);
+            throw new MyBusinessException("Error uploading image" + s3e.getMessage());
+        } catch (Exception e) {
+            log.error("Unexpected uploading deleting image", e);
+            throw new MyBusinessException("Error uploading image" + e.getMessage());
+        }
     }
 
     @Override
@@ -108,7 +108,6 @@ public class AwsImageStorageAdapter implements ImageStorageServicePort {
         }
     }
 
-
     /**
      *
      * @param url https://amazonaws/erp-products/products/mac-01.png
@@ -136,8 +135,7 @@ public class AwsImageStorageAdapter implements ImageStorageServicePort {
     }
 
     private String determineContentType(String filename) {
-        final var extension =
-                filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+        final var extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
 
         return switch (extension) {
             case "jpg" -> "image/jpeg";

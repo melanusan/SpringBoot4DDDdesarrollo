@@ -20,5 +20,6 @@ classDiagram
 ```
 
 References:
-- Ports & Adapters pattern: https://alistair.cockburn.us/hexagonal-architecture/
-- Spring Data JPA reference: https://spring.io/projects/spring-data-jpa
+
+- Ports & Adapters pattern: <https://alistair.cockburn.us/hexagonal-architecture/>
+- Spring Data JPA reference: <https://spring.io/projects/spring-data-jpa>

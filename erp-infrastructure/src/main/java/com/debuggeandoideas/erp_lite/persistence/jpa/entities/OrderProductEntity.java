@@ -26,19 +26,11 @@ public class OrderProductEntity {
     private UUID id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "order_id",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_order_products_order")
-    )
+    @JoinColumn(name = "order_id", nullable = false, foreignKey = @ForeignKey(name = "fk_order_products_order"))
     private OrderEntity order;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "product_id",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_order_products_product")
-    )
+    @JoinColumn(name = "product_id", nullable = false, foreignKey = @ForeignKey(name = "fk_order_products_product"))
     private ProductEntity product;
 
     @Column(name = "product_name", length = 200, nullable = false)

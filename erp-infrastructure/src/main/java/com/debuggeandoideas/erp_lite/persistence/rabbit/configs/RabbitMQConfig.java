@@ -20,8 +20,8 @@ import tools.jackson.databind.json.JsonMapper;
 @Configuration
 public class RabbitMQConfig {
 
-    public static final String EXCHANGE    = "erp.events";
-    public static final String QUEUE       = "erp.product.created";
+    public static final String EXCHANGE = "erp.events";
+    public static final String QUEUE = "erp.product.created";
     public static final String ROUTING_KEY = "product.created";
 
     @Bean
@@ -49,7 +49,7 @@ public class RabbitMQConfig {
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,
-                                         JacksonJsonMessageConverter converter) {
+            JacksonJsonMessageConverter converter) {
 
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 

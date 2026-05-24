@@ -29,7 +29,7 @@ import java.time.format.DateTimeFormatter;
 @Service
 @RequiredArgsConstructor
 public class GmailAdapter implements OrderConfirmEmailServicePort {
-    
+
     private final JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
@@ -59,8 +59,7 @@ public class GmailAdapter implements OrderConfirmEmailServicePort {
             messageHelper.setSubject("Orden" + orderNumber + "Confirmed");
 
             final var html = this.buildHtmlContent(
-                    orderNumber, orderId, money, customerName, itemsCount
-            );
+                    orderNumber, orderId, money, customerName, itemsCount);
 
             messageHelper.setText(html, true);
             this.mailSender.send(mimeMessage);
@@ -71,7 +70,6 @@ public class GmailAdapter implements OrderConfirmEmailServicePort {
             throw new RuntimeException(e);
         }
 
-
     }
 
     private String buildHtmlContent(
@@ -79,8 +77,7 @@ public class GmailAdapter implements OrderConfirmEmailServicePort {
             OrderId orderId,
             Money totalAmount,
             String customerName,
-            int itemsCount
-    ) {
+            int itemsCount) {
         try {
             String template = emailTemplate.getContentAsString(StandardCharsets.UTF_8);
 
