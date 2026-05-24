@@ -1,0 +1,20 @@
+sequenceDiagram
+    autonumber
+    participant Client as Cliente
+    participant API as "erp-api\nAuthController\n(vars: authRequest:AuthRequest, authentication:Authentication, userDetails:AppUserDetails, token:String)"
+    participant Sec as "erp-application/security\nAuthenticationManager (Spring Security)"
+    participant UserSrv as "erp-infrastructure\nUserDetailsService / UserRepository\n(loadUserByUsername -> returns AppUserDetails)"
+    participant JWT as "erp-infrastructure\nJWTService (generateToken)"
+    participant Domain as "erp-domain\nUserEntity (extends Entity<UserId>?)"
+    participant Common as "erp-common\nAuthRequest/AuthResponse/AppUserDetails"
+
+    Client->>API: POST /auth/login { username, password } \n POST /auth/login { authRequest: AuthRequest(username,password) }
+    API->>Sec: authenticationManager.authenticate(UsernamePasswordAuthenticationToken) \n authenticationManager.authenticate \n (new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password()))
+    Sec->>UserSrv: loadUserByUsername(username)
+    UserSrv->>Domain: fetch user record (UserEntity)
+    Domain-->>UserSrv: user data
+    UserSrv-->>Sec: AppUserDetails (implements UserDetails)
+    Sec-->>API: Authentication(principal=AppUserDetails) -> authentication
+    API->>JWT: jwtService.generateToken(userDetails /* AppUserDetails */)
+    JWT-->>API: token (String)
+    API-->>Client: 200 OK { AuthResponse(jwt: token) }
