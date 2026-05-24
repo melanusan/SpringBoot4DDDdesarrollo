@@ -1,11 +1,11 @@
 sequenceDiagram
     autonumber
     participant Client as Cliente
-    participant API as "erp-api\nQueryCatalogControllerV1\n(vars: type:String, catalogType:CatalogType, code:String, response:CatalogView/ItemsView)"
-    participant App as "erp-application\nFindCatalogByTypeQuery.execute(CatalogType)\nFindCatalogItemsByTypeQuery.execute(CatalogType)\nFindCatalogItemByCodeQuery.execute(CatalogType, code)"
-    participant Domain as "erp-domain\nCatalogView / ItemsView (DTOs)\nCatalogType (enum)"
-    participant Infra as "erp-infrastructure\nCatalogRepository"
-    participant Common as "erp-common\nDTOs / Exceptions (QueryException)"
+    participant API as "erp-api<br/>QueryCatalogControllerV1<br/>(vars: type:String, catalogType:CatalogType, code:String, response:CatalogView/ItemsView)"
+    participant App as "erp-application<br/>FindCatalogByTypeQuery.execute(CatalogType)<br/>FindCatalogItemsByTypeQuery.execute(CatalogType)<br/>FindCatalogItemByCodeQuery.execute(CatalogType, code)"
+    participant Domain as "erp-domain<br/>CatalogView / ItemsView (DTOs)<br/>CatalogType (enum)"
+    participant Infra as "erp-infrastructure<br/>CatalogRepository"
+    participant Common as "erp-common<br/>DTOs / Exceptions (QueryException)"
 
     Note over API,App: Obtener catálogo por tipo (GET /{type})
     Client->>API: GET /queries/catalogs/{type}
@@ -26,7 +26,7 @@ sequenceDiagram
     API-->>Client: 200 OK [ ItemsView... ]
 
     Note over API,App: Obtener ítem por tipo y código (GET /{type}/items?code=...)
-    Client->>API: GET /queries/catalogs/{type}/items?code=ELECTRONICS \n GET /queries/catalogs/{type}/items?code={code}
+    Client->>API: GET /queries/catalogs/{type}/items?code=ELECTRONICS <br/> GET /queries/catalogs/{type}/items?code={code}
     API->>API: catalogType = CatalogType.valueOf(type.toUpperCase())
     API->>App: FindCatalogItemByCodeQuery.execute(catalogType, code)
     App->>Infra: CatalogRepository.findItemByTypeAndCode(catalogType, code)

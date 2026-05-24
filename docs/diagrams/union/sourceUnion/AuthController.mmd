@@ -1,15 +1,15 @@
 sequenceDiagram
     autonumber
     participant Client as Cliente
-    participant API as "erp-api\nAuthController\n(vars: authRequest:AuthRequest, authentication:Authentication, userDetails:AppUserDetails, token:String)"
-    participant Sec as "erp-application/security\nAuthenticationManager (Spring Security)"
-    participant UserSrv as "erp-infrastructure\nUserDetailsService / UserRepository\n(loadUserByUsername -> returns AppUserDetails)"
-    participant JWT as "erp-infrastructure\nJWTService (generateToken)"
-    participant Domain as "erp-domain\nUserEntity (extends Entity<UserId>?)"
-    participant Common as "erp-common\nAuthRequest/AuthResponse/AppUserDetails"
+    participant API as "erp-api<br/>AuthController<br/>(vars: authRequest:AuthRequest, authentication:Authentication, userDetails:AppUserDetails, token:String)"
+    participant Sec as "erp-application/security<br/>AuthenticationManager (Spring Security)"
+    participant UserSrv as "erp-infrastructure<br/>UserDetailsService / UserRepository<br/>(loadUserByUsername -> returns AppUserDetails)"
+    participant JWT as "erp-infrastructure<br/>JWTService (generateToken)"
+    participant Domain as "erp-domain<br/>UserEntity (extends Entity<UserId>?)"
+    participant Common as "erp-common<br/>AuthRequest/AuthResponse/AppUserDetails"
 
-    Client->>API: POST /auth/login { username, password } \n POST /auth/login { authRequest: AuthRequest(username,password) }
-    API->>Sec: authenticationManager.authenticate(UsernamePasswordAuthenticationToken) \n authenticationManager.authenticate \n (new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password()))
+    Client->>API: POST /auth/login { username, password } <br/> POST /auth/login { authRequest: AuthRequest(username,password) }
+    API->>Sec: authenticationManager.authenticate(UsernamePasswordAuthenticationToken) <br/> authenticationManager.authenticate <br/> (new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password()))
     Sec->>UserSrv: loadUserByUsername(username)
     UserSrv->>Domain: fetch user record (UserEntity)
     Domain-->>UserSrv: user data
