@@ -1,0 +1,33 @@
+sequenceDiagram
+    autonumber
+    participant Client as Cliente
+    participant API as "erp-api<br/>QueryCatalogControllerV1<br/>(vars: type:String, code:String)"
+    participant App as "erp-application<br/>FindCatalogByTypeQuery.execute(CatalogType)<br/>FindCatalogItemsByTypeQuery.execute(CatalogType)<br/>FindCatalogItemByCodeQuery.execute(CatalogType, code)"
+    participant Domain as "erp-domain<br/>CatalogView (DTO) / ItemsView (DTO)<br/>CatalogType (enum)"
+    participant Infra as "erp-infrastructure<br/>CatalogRepository (reads from MongoDB / in-memory)"
+    participant Common as "erp-common<br/>DTOs / Exceptions: QueryException, BaseResponseWrapper"
+
+    Note over Client,API: Obtener catálogo por tipo
+    Client->>API: GET /queries/catalogs/{type}
+    API->>API: catalogType = CatalogType.valueOf(type.toUpperCase())
+    API->>App: FindCatalogByTypeQuery.execute(catalogType)
+    App->>Infra: CatalogRepository.findByType(catalogType)
+    Infra-->>App: Optional<CatalogView>
+    App-->>API: CatalogView or throw QueryException
+    API-->>Client: 200 OK { CatalogView }
+
+    Note over Client,API: Obtener ítems por tipo
+    Client->>API: GET /queries/catalogs/{type}/items
+    API->>App: FindCatalogItemsByTypeQuery.execute(catalogType)
+    App->>Infra: CatalogRepository.findItemsByType(catalogType)
+    Infra-->>App: List<ItemsView>
+    App-->>API: List<ItemsView>
+    API-->>Client: 200 OK [ ItemsView... ]
+
+    Note over Client,API: Obtener ítem por tipo y código
+    Client->>API: GET /queries/catalogs/{type}/items?code={code}
+    API->>App: FindCatalogItemByCodeQuery.execute(catalogType, code)
+    App->>Infra: CatalogRepository.findItemByTypeAndCode(catalogType, code)
+    Infra-->>App: Optional<ItemsView>
+    App-->>API: ItemsView or throw QueryException
+    API-->>Client: 200 OK { ItemsView }

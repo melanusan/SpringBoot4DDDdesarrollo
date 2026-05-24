@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    participant Client as Cliente
+    participant API as "erp-api<br/>AuthController<br/>(vars: authRequest:AuthRequest, authentication:Authentication, userDetails:AppUserDetails, token:String)"
+    participant Sec as "spring-security<br/>AuthenticationManager (authenticate(UsernamePasswordAuthenticationToken))"
+    participant UserSrv as "erp-infrastructure<br/>UserDetailsService / UserRepository<br/>(loadUserByUsername -> AppUserDetails)"
+    participant JWT as "erp-infrastructure<br/>JWTService<br/>(generateToken(AppUserDetails))"
+    participant Domain as "erp-domain<br/>UserEntity extends Entity<UserId>\n(contains username, passwordHash, roles)"
+    participant Common as "erp-common<br/>DTOs: AuthRequest(username,password), AuthResponse(token)<br/>security: AppUserDetails implements UserDetails"
+
+    Note over Client,API: Flujo de autenticación y generación de JWT
+
+    Client->>API: POST /auth/login { authRequest: AuthRequest(username, password) }
+    API->>Sec: authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password()))
+    Sec->>UserSrv: loadUserByUsername(username)  // UserDetailsService loads UserEntity and maps to AppUserDetails
+    UserSrv->>Domain: fetch user record (UserEntity)
+    Domain-->>UserSrv: UserEntity (username, passwordHash, roles)
+    UserSrv-->>Sec: AppUserDetails (implements UserDetails)
+    Sec-->>API: Authentication(principal=AppUserDetails) -> authentication
+    API->>JWT: jwtService.generateToken(userDetails /* AppUserDetails */)
+    JWT-->>API: token (String)
+    API-->>Client: 200 OK { AuthResponse(token) }
+
+    Note over API,UserSrv: clases y relaciones relevantes
+    Note right of Domain: `UserEntity` extends `Entity<UserId>`
+    Note right of UserSrv: `AppUserDetails` implements `UserDetails` (adapts `UserEntity`)
+    Note right of Sec: `AuthenticationManager` uses `UsernamePasswordAuthenticationToken`

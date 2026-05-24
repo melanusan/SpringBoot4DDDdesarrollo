@@ -1,0 +1,47 @@
+sequenceDiagram
+    autonumber
+    participant Client as Cliente
+    participant API as "erp-api<br/>QueryProductsControllersV1<br/>(vars: id:String, sku:String, text:String, category:String)"
+    participant App as "erp-application<br/>FindProductByIdQuery.execute(id)<br/>FindProductBySkuQuery.execute(sku)<br/>FindProductActiveQuery.execute()<br/>FindProductByTextQuery.execute(text)<br/>FindProductByCategory.execute(category)"
+    participant Domain as "erp-domain<br/>ProductView (DTO)<br/>ProductRoot extends AggregateRoot<ProductId> -> Entity<ProductId>"
+    participant Infra as "erp-infrastructure<br/>ProductRepository / ProductCatalogRepositoryPort (DB / Search)"
+    participant Common as "erp-common<br/>DTOs / Exceptions: ProductView, QueryException"
+
+    Note over Client,API: Obtener producto por ID
+    Client->>API: GET /queries/products/{id}
+    API->>App: FindProductByIdQuery.execute(id)
+    App->>Infra: ProductRepository.findById(id)
+    Infra-->>App: Optional<ProductView>
+    App-->>API: ProductView or throw QueryException
+    API-->>Client: 200 OK { ProductView }
+
+    Note over Client,API: Obtener por SKU
+    Client->>API: GET /queries/products?sku={sku}
+    API->>App: FindProductBySkuQuery.execute(sku)
+    App->>Infra: ProductRepository.findBySku(sku)
+    Infra-->>App: Optional<ProductView>
+    App-->>API: ProductView
+    API-->>Client: 200 OK { ProductView }
+
+    Note over Client,API: Listar productos activos
+    Client->>API: GET /queries/products/active
+    API->>App: FindProductActiveQuery.execute()
+    App->>Infra: ProductRepository.findActive()
+    Infra-->>App: List<ProductView>
+    App-->>API: List<ProductView> (or 204 No Content)
+    API-->>Client: 200 OK / 204 No Content
+
+    Note over Client,API: Búsqueda por texto / categoría
+    Client->>API: GET /queries/products/search?text={text}
+    API->>App: FindProductByTextQuery.execute(text)
+    App->>Infra: ProductRepository.searchByText(text)
+    Infra-->>App: List<ProductView>
+    App-->>API: List<ProductView>
+    API-->>Client: 200 OK [ ProductView... ]
+
+    Client->>API: GET /queries/products?category={category}
+    API->>App: FindProductByCategory.execute(category)
+    App->>Infra: ProductRepository.findByCategory(category)
+    Infra-->>App: List<ProductView>
+    App-->>API: List<ProductView>
+    API-->>Client: 200 OK [ ProductView... ]

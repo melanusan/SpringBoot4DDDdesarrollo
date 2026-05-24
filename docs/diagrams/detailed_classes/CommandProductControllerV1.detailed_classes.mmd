@@ -1,0 +1,50 @@
+sequenceDiagram
+    autonumber
+    participant Client as Cliente
+    participant API as "erp-api<br/>CommandProductControllerV1<br/>(vars: createProductCommand:CreateProductCommand, updateProductCommand:UpdateProductCommand, updateStockCommand:UpdateStockCommand, id:String)"
+    participant App as "erp-application<br/>CreateProductUseCase.execute(CreateProductCommand)<br/>UpdateProductUseCase.execute(UpdateProductCommand)<br/>UpdateStockUseCase.execute(UpdateStockCommand)<br/>DeactivateProductUseCase.execute(DeactivateProductCommand)"
+    participant Domain as "erp-domain<br/>ProductRoot extends AggregateRoot<ProductId> -> Entity<ProductId]<br/>ValueObjects: SKU, ProductName, Stock, CategoryReference, ProductImage, Money"
+    participant Infra as "erp-infrastructure<br/>ProductRepository / ImageStorageService / ProductCatalogRepositoryPort"
+    participant Common as "erp-common<br/>Commands/DTOs: CreateProductCommand, UpdateProductCommand, UpdateStockCommand, DeactivateProductCommand"
+
+    Note over Client,API: Crear producto (multipart/form-data)
+    Client->>API: POST /commands/products (CreateProductCommand + image data)
+    API->>Common: mapear y validar CreateProductCommand (record)
+    API->>App: CreateProductUseCase.execute(command)
+    App->>Domain: ProductRoot.create(sku, name, description, price, stock, category, image, createdBy)
+    Note over Domain: ProductRoot (AggregateRoot) instancia ProductImage (value object)
+    Domain->>Infra: ProductRepository.save(productRoot)
+    Infra-->>Domain: persisted ProductId
+    Domain-->>App: productRoot with id
+    App-->>API: returns productId
+    API-->>Client: 201 Created Location: /commands/products/{id}
+
+    Note over Client,API: Actualizar producto
+    Client->>API: PUT /commands/products/{id} (UpdateProductCommand + optional image)
+    API->>App: UpdateProductUseCase.execute(updateCommand)
+    App->>Infra: ProductRepository.findById(id)
+    Infra-->>App: productRoot
+    App->>Domain: productRoot.update(name, description, price, category, image)
+    Domain->>Infra: ProductRepository.save(productRoot)
+    App-->>API: void
+    API-->>Client: 204 No Content
+
+    Note over Client,API: Actualizar stock
+    Client->>API: PATCH /commands/products/{id}/stock { UpdateStockCommand }
+    API->>App: UpdateStockUseCase.execute(updateStockCommand)
+    App->>Infra: ProductRepository.findById(id)
+    Infra-->>App: productRoot
+    App->>Domain: if command.isIncrement() -> productRoot.incrementStock(qty, reason) else productRoot.decrementStock(abs(qty), reason)
+    Domain->>Infra: ProductRepository.save(productRoot)
+    App-->>API: void
+    API-->>Client: 204 No Content
+
+    Note over Client,API: Desactivar producto
+    Client->>API: PATCH /commands/products/{id}/deactivate
+    API->>App: DeactivateProductUseCase.execute(new DeactivateProductCommand(id))
+    App->>Infra: ProductRepository.findById(id)
+    Infra-->>App: productRoot
+    App->>Domain: productRoot.deactivate() // register ProductDeactivated event
+    Domain->>Infra: ProductRepository.save(productRoot)
+    App-->>API: void
+    API-->>Client: 204 No Content

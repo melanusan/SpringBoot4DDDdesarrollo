@@ -1,0 +1,44 @@
+sequenceDiagram
+    autonumber
+    %% Layers: API -> Application -> Domain -> Infrastructure -> Common
+    participant Client as Cliente
+    participant API as "erp-api<br/>CommandOrderControllerV1<br/>(vars: createOrderCommand:CreateOrderCommand, id:String, reason:String, status:String)"
+    participant App as "erp-application<br/>CreateOrderUseCase.execute(CreateOrderCommand)<br/>UpdateOrderStatusUseCase.execute(UpdateOrderStatusCommand)<br/>CancelOrderUseCase.execute(CancelOrderCommand)"
+    participant Domain as "erp-domain<br/>OrderRoot extends AggregateRoot<OrderId> -> Entity<OrderId]<br/>OrderItem extends Entity<OrderItemId><br/>ValueObjects: OrderNumber, Customer, OrderStatus, Money, Quantity"
+    participant Infra as "erp-infrastructure<br/>OrderRepository (implements OrderCatalogRepositoryPort) / PaymentGateway / InventoryClient"
+    participant Common as "erp-common<br/>Commands/DTOs: CreateOrderCommand{OrderItemRequest}, CancelOrderCommand(orderId,reason), UpdateOrderStatusCommand(id,status)"
+
+    Note over Client,API: Flujo: crear orden, cancelar, actualizar estado
+
+    Client->>API: POST /commands/orders { CreateOrderCommand(customerId, items[], createdBy) }
+    API->>Common: validar y mapear request -> CreateOrderCommand (record) // OrderItemRequest(productId, quantity)
+    API->>App: CreateOrderUseCase.execute(createOrderCommand)
+    App->>Domain: OrderFactory.create(orderNumber, customer, items, createdBy) -> OrderRoot.create(...)
+    Note over Domain: OrderRoot (AggregateRoot) crea OrderItem(s) (Entity)
+    Domain->>Infra: OrderRepository.save(orderRoot) // persist aggregate
+    Infra-->>Domain: persisted OrderId
+    Domain-->>App: returns OrderId
+    App-->>API: returns id
+    API-->>Client: 201 Created Location: /commands/orders/{id}
+
+    Note over Client,API: Cancelar orden
+    Client->>API: PATCH /commands/orders/{id}/cancel?reason={reason}
+    API->>Common: new CancelOrderCommand(id, reason) (record)
+    API->>App: CancelOrderUseCase.execute(cancelCommand)
+    App->>Infra: OrderRepository.findById(id)
+    Infra-->>App: orderRoot
+    App->>Domain: orderRoot.cancel(reason)  // OrderRoot.cancel -> register OrderCancelled event
+    Domain->>Infra: OrderRepository.save(orderRoot)
+    App-->>API: void
+    API-->>Client: 204 No Content
+
+    Note over Client,API: Actualizar estado
+    Client->>API: PATCH /commands/orders/{id}/status?status={status}
+    API->>Common: new UpdateOrderStatusCommand(id, status)
+    API->>App: UpdateOrderStatusUseCase.execute(command)
+    App->>Infra: OrderRepository.findById(id)
+    Infra-->>App: orderRoot
+    App->>Domain: orderRoot.updateStatus(OrderStatus.valueOf(status)) // domain transitions: confirm/ship/deliver
+    Domain->>Infra: OrderRepository.save(orderRoot)
+    App-->>API: void
+    API-->>Client: 204 No Content
